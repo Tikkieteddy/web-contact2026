@@ -17,7 +17,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .header{background:#ffffff;border-bottom:1px solid var(--border);padding:20px 0;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px);background:rgba(255,255,255,0.95)}
 .header-inner{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
 .logo{display:flex;align-items:center;gap:12px}
-.logo-mark{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),#c4a265);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;letter-spacing:0.5px}
+.logo-mark{width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.logo-mark img{width:100%;height:100%;object-fit:contain}
 .logo-text{font-size:20px;font-weight:600;color:var(--accent);letter-spacing:0.5px}
 .logo-sub{font-size:12px;color:var(--text-secondary);letter-spacing:0.3px}
 .search-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
@@ -78,7 +79,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .login-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:#faf8f5;z-index:9999;display:flex;align-items:center;justify-content:center;transition:opacity 0.5s,visibility 0.5s}
 .login-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
 .login-box{background:#fff;border-radius:16px;padding:48px 40px;max-width:400px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(154,123,79,0.1);border:1px solid #e8e0d4}
-.login-logo{width:64px;height:64px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;letter-spacing:1px;margin:0 auto 24px}
+.login-logo{width:80px;height:80px;border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin:0 auto 24px}
+.login-logo img{width:100%;height:100%;object-fit:contain}
 .login-title{font-size:24px;font-weight:600;color:#1a1a2e;margin-bottom:8px;letter-spacing:0.3px}
 .login-subtitle{font-size:14px;color:#7a7a9a;margin-bottom:32px}
 .pass-group{margin-bottom:24px}
@@ -98,7 +100,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
-    <div class="login-logo" style="background:linear-gradient(135deg,#9a7b4f,#c4a265)">N57</div>
+    <div class="login-logo"><img src="image_ndc57_abc7/ndc57/icn-cma2x.png" alt="NDC57 Logo"></div>
     <div class="login-title">NDC57 Directory</div>
     <div class="login-subtitle">กรุณาใส่รหัสผ่านเพื่อเข้าสู่ระบบ</div>
     <div class="pass-group">
@@ -113,7 +115,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 <header class="header">
   <div class="header-inner">
     <div class="logo">
-      <div class="logo-mark">N57</div>
+      <div class="logo-mark"><img src="image_ndc57_abc7/ndc57/icn-cma2x.png" alt="NDC57 Logo"></div>
       <div>
         <div class="logo-text">NDC57 Directory</div>
         <div class="logo-sub">สมุดรายชื่อผู้บริหาร</div>
