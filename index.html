@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Directory</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI','Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:#f5f5f7;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;-webkit-font-smoothing:antialiased}
+.container{max-width:800px;width:100%;text-align:center}
+h1{font-size:28px;color:#1a1a2e;margin-bottom:8px;font-weight:600;letter-spacing:0.3px}
+p{font-size:15px;color:#666;margin-bottom:48px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px}
+.card{background:#fff;border-radius:14px;padding:40px 32px;text-decoration:none;color:inherit;border:1.5px solid #e2e6ec;transition:all .25s;display:block}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.1)}
+.card.abc7:hover{border-color:#1b3a5c}
+.card.ndc57:hover{border-color:#9a7b4f}
+.card-icon{width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-weight:700;font-size:18px;color:#fff;letter-spacing:0.5px}
+.abc7 .card-icon{background:#1b3a5c}
+.ndc57 .card-icon{background:linear-gradient(135deg,#9a7b4f,#c4a265)}
+.card h2{font-size:20px;margin-bottom:6px;font-weight:600}
+.card .subtitle{font-size:13px;color:#888;margin-bottom:12px}
+.card .desc{font-size:14px;color:#555;line-height:1.5}
+.footer{margin-top:48px;font-size:12px;color:#aaa}
+@media(max-width:640px){
+  .cards{grid-template-columns:1fr}
+  h1{font-size:24px}
+  .card{padding:32px 24px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Executive Contact Directory</h1>
+<p>Select a directory to view contacts</p>
+<div class="cards">
+<a href="ABC7_Contact.html" class="card abc7">
+<div class="card-icon">A7</div>
+<h2>ABC7 Directory</h2>
+<div class="subtitle">Executive Contact Network</div>
+<div class="desc">131 contacts across 10 international groups</div>
+</a>
+<a href="NDC57_Contact.html" class="card ndc57">
+<div class="card-icon">N57</div>
+<h2>NDC57 Directory</h2>
+<div class="subtitle">สมุดรายชื่อผู้บริหาร</div>
+<div class="desc">311 contacts across 11 groups</div>
+</a>
+</div>
+<div class="footer">Contact Directory System</div>
+</div>
+</body>
+</html>
