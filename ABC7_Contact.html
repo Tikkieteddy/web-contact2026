@@ -73,9 +73,43 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   .filters{gap:6px}
   .filter-btn{padding:6px 14px;font-size:12px}
 }
+
+/* ===== LOGIN SCREEN ===== */
+.login-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:#f7f8fa;z-index:9999;display:flex;align-items:center;justify-content:center;transition:opacity 0.5s,visibility 0.5s}
+.login-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.login-box{background:#fff;border-radius:16px;padding:48px 40px;max-width:400px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(27,58,92,0.1);border:1px solid #e2e6ec}
+.login-logo{width:64px;height:64px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:22px;letter-spacing:1px;margin:0 auto 24px}
+.login-title{font-size:24px;font-weight:600;color:#1a1a2e;margin-bottom:8px;letter-spacing:0.3px}
+.login-subtitle{font-size:14px;color:#7a7a9a;margin-bottom:32px}
+.pass-group{margin-bottom:24px}
+.pass-input{width:100%;padding:14px 18px;border:1.5px solid #e2e6ec;border-radius:12px;text-align:center;font-size:20px;font-weight:500;letter-spacing:4px;color:#1a1a2e;background:#fff;outline:none;transition:border-color 0.2s,box-shadow 0.2s;font-family:var(--font)}
+.pass-input:focus{border-color:#1b3a5c;box-shadow:0 0 0 3px rgba(27,58,92,0.1)}
+.pass-input.error{border-color:#e74c3c;box-shadow:0 0 0 3px rgba(231,76,60,0.1);animation:shake 0.4s ease}
+.login-btn{width:100%;padding:14px;background:#1b3a5c;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:opacity 0.2s,transform 0.1s;font-family:var(--font);letter-spacing:0.3px}
+.login-btn:hover{opacity:0.9}
+.login-btn:active{transform:scale(0.98)}
+.login-error{color:#e74c3c;font-size:13px;margin-top:16px;min-height:20px;transition:opacity 0.2s}
+.login-footer{margin-top:24px;font-size:12px;color:#aaa}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-4px)}}
+
 </style>
 </head>
 <body>
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo" style="background:#1b3a5c">A7</div>
+    <div class="login-title">ABC7 Directory</div>
+    <div class="login-subtitle">กรุณาใส่รหัสผ่านเพื่อเข้าสู่ระบบ</div>
+    <div class="pass-group">
+      <input type="password" class="pass-input" id="passInput" placeholder="••••••••••" autocomplete="off" inputmode="numeric">
+    </div>
+    <button class="login-btn" onclick="verifyPin()">เข้าสู่ระบบ</button>
+    <div class="login-error" id="loginError">&nbsp;</div>
+    <div class="login-footer">Authorized Access Only</div>
+  </div>
+</div>
+
 <header class="header">
   <div class="header-inner">
     <div class="logo">
@@ -223,6 +257,42 @@ function closeModal() {
 }
 
 init();
+
+// ===== LOGIN SYSTEM =====
+const CORRECT_PASS = "0811228888";
+const passInput = document.getElementById('passInput');
+
+passInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') verifyPin();
+});
+passInput.addEventListener('input', () => {
+  passInput.classList.remove('error');
+  document.getElementById('loginError').innerHTML = '&nbsp;';
+});
+
+setTimeout(() => { passInput.focus(); }, 300);
+
+function verifyPin() {
+  if (passInput.value === CORRECT_PASS) {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.querySelector('.header').style.display = '';
+    document.querySelector('.container').style.display = '';
+    sessionStorage.setItem('auth_abc7', 'true');
+  } else {
+    document.getElementById('loginError').textContent = 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง';
+    passInput.classList.add('error');
+    passInput.value = '';
+    passInput.focus();
+  }
+}
+
+if (sessionStorage.getItem('auth_abc7') === 'true') {
+  document.getElementById('loginScreen').classList.add('hidden');
+} else {
+  document.querySelector('.header').style.display = 'none';
+  document.querySelector('.container').style.display = 'none';
+}
+
 </script>
 </body>
 </html>
