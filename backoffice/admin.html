@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Contact Directory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .access-denied {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1b3a5c 0%, #2c5aa0 100%);
+        }
+
+        .access-denied-content {
+            text-align: center;
+            color: white;
+            padding: 40px;
+        }
+
+        .access-denied-content h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .access-denied-content p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .access-denied-content button {
+            background: white;
+            color: #1b3a5c;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .access-denied-content button:hover {
+            background: #f0f0f0;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #1b3a5c;
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #2c5aa0;
+            padding-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-user {
+            font-size: 12px;
+            color: #b0c4de;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-nav a, .sidebar-nav button {
+            display: block;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            transition: background 0.3s;
+            width: 100%;
+            text-align: left;
+        }
+
+        .sidebar-nav a:hover, .sidebar-nav button:hover {
+            background: #2c5aa0;
+        }
+
+        .sidebar-nav a.active {
+            background: #0d9488;
+            font-weight: 600;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1b3a5c 0%, #2c5aa0 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header-buttons button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            background: white;
+            color: #1b3a5c;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .header-buttons button:hover {
+            background: #f0f0f0;
+        }
+
+        .content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab-button {
+            padding: 12px 25px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab-button:hover {
+            color: #1b3a5c;
+        }
+
+        .tab-button.active {
+            color: #1b3a5c;
+            border-bottom-color: #1b3a5c;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .search-box button {
+            padding: 12px 20px;
+            background: #1b3a5c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .search-box button:hover {
+            background: #0d3a5a;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8f8f8;
+            border-bottom: 2px solid #ddd;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #0d9488;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0a7a6e;
+        }
+
+        .btn-secondary {
+            background: #1b3a5c;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #0d3a5a;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: #0d9488;
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        .toast.error {
+            background: #dc2626;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1b3a5c;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e0e7ff;
+            color: #1b3a5c;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1b3a5c;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .sidebar-nav {
+                display: flex;
+                gap: 5px;
+            }
+
+            .sidebar-nav li {
+                margin-bottom: 0;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="accessDenied" class="access-denied" style="display: none;">
+    <div class="access-denied-content">
+        <h1>🔒 Access Denied</h1>
+        <p>คุณไม่มีสิทธิ์เข้าถึง Admin Panel</p>
+        <p>Only authorized administrators can access this panel.</p>
+        <button onclick="goBack()">กลับไปยังหน้าหลัก</button>
+    </div>
+</div>
+
+<div id="mainPanel" class="container" style="display: none;">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Admin Panel</h2>
+            <div class="sidebar-user">
+                <p id="userPhone" style="margin-bottom: 5px;"></p>
+                <p>Admin</p>
+            </div>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="#" class="nav-link active" onclick="switchTab(event, 'manageAccess')">👤 จัดการ Login</a></li>
+            <li><a href="#" class="nav-link" onclick="switchTab(event, 'editContact')">✏️ แก้ไข Contact</a></li>
+            <li><a href="#" class="nav-link" onclick="switchTab(event, 'addDeleteContact')">➕ เพิ่ม/ลบ Contact</a></li>
+            <li><button onclick="importInitialData()" style="margin-top: 20px;">📥 Import Initial Data</button></li>
+            <li><button onclick="logout()" style="margin-top: 10px; background: #dc2626;">🚪 Logout</button></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="header-title">Admin Panel - Contact Directory Management</div>
+            <div class="header-buttons">
+                <button onclick="goBack()">← Back to Menu</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Tab 1: Manage Access -->
+            <div id="manageAccess" class="tab-content active">
+                <h2 class="section-title">จัดการการเข้าถึง (Manage Access)</h2>
+
+                <div style="margin-bottom: 30px;">
+                    <button class="btn btn-primary" onclick="openAddPhoneModal()">+ เพิ่มเบอรโทรศัพท์</button>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" id="phoneSearchInput" placeholder="ค้นหาเบอรโทรศัพท์...">
+                    <button onclick="searchPhones()">ค้นหา</button>
+                </div>
+
+                <div id="phonesTableContainer" class="table-container">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>กำลังโหลดข้อมูล...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Edit Contacts -->
+            <div id="editContact" class="tab-content">
+                <h2 class="section-title">แก้ไขข้อมูล Contact (Edit Contacts)</h2>
+
+                <div class="form-group">
+                    <label>เลือกหมวดหมู่ (Directory)</label>
+                    <select id="directorySelect" onchange="loadContactsForDirectory()">
+                        <option value="">-- เลือกหมวดหมู่ --</option>
+                        <option value="contacts_abc7">ABC7 - International</option>
+                        <option value="contacts_ndc57">NDC57 - สัตว์</option>
+                    </select>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" id="contactSearchInput" placeholder="ค้นหา Contact...">
+                    <button onclick="searchContacts()">ค้นหา</button>
+                </div>
+
+                <div id="contactsTableContainer" class="table-container">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📁</div>
+                        <p>เลือกหมวดหมู่เพื่อดูข้อมูล Contact</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Add/Delete Contact -->
+            <div id="addDeleteContact" class="tab-content">
+                <h2 class="section-title">เพิ่ม/ลบ Contact (Add/Delete)</h2>
+
+                <div style="margin-bottom: 40px;">
+                    <h3 style="font-size: 16px; margin-bottom: 20px; color: #1b3a5c;">เพิ่มติดต่อใหม่</h3>
+
+                    <div class="form-group">
+                        <label>เลือกหมวดหมู่ (Directory)*</label>
+                        <select id="addDirectorySelect" onchange="updateGroupOptions()">
+                            <option value="">-- เลือกหมวดหมู่ --</option>
+                            <option value="contacts_abc7">ABC7 - International</option>
+                            <option value="contacts_ndc57">NDC57 - สัตว์</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>หมวดกลุ่ม (Group)*</label>
+                        <select id="addGroupSelect">
+                            <option value="">-- เลือกหมวดกลุ่ม --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>คำนำหน้า (Prefix)</label>
+                            <input type="text" id="addPrefix" placeholder="เช่น Mr., Dr.">
+                        </div>
+                        <div class="form-group">
+                            <label>ชื่อไทย (Thai Name)*</label>
+                            <input type="text" id="addTname" placeholder="ชื่อไทย" required>
+                        </div>
+                        <div class="form-group">
+                            <label>ชื่ออังกฤษ (English Name)</label>
+                            <input type="text" id="addEname" placeholder="English Name">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>ชื่อเล่น (Nickname)</label>
+                            <input type="text" id="addNickname" placeholder="Nickname">
+                        </div>
+                        <div class="form-group">
+                            <label>ตำแหน่ง (Position)</label>
+                            <input type="text" id="addPosition" placeholder="Position">
+                        </div>
+                        <div class="form-group">
+                            <label>บริษัท (Company)</label>
+                            <input type="text" id="addCompany" placeholder="Company">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>ที่อยู่ (Address)</label>
+                        <textarea id="addAddress" placeholder="Address"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>มือถือ 1 (Mobile 1)</label>
+                            <input type="text" id="addMobile1" placeholder="0XX-XXX-XXXX">
+                        </div>
+                        <div class="form-group">
+                            <label>มือถือ 2 (Mobile 2)</label>
+                            <input type="text" id="addMobile2" placeholder="0XX-XXX-XXXX">
+                        </div>
+                        <div class="form-group">
+                            <label>โทรศัพท์ (Tel)</label>
+                            <input type="text" id="addTel" placeholder="Tel">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>โทรสาร (Fax)</label>
+                            <input type="text" id="addFax" placeholder="Fax">
+                        </div>
+                        <div class="form-group">
+                            <label>อีเมล (Email)</label>
+                            <input type="email" id="addEmail" placeholder="email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>หมายเหตุ (Remark)</label>
+                            <input type="text" id="addRemark" placeholder="Remark">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>วันเกิด (Birth Day)</label>
+                            <input type="number" id="addBirthdayDay" placeholder="1-31" min="1" max="31">
+                        </div>
+                        <div class="form-group">
+                            <label>เดือนเกิด (Birth Month)</label>
+                            <input type="number" id="addBirthdayMonth" placeholder="1-12" min="1" max="12">
+                        </div>
+                        <div class="form-group">
+                            <label>ปีเกิด (Birth Year)</label>
+                            <input type="number" id="addBirthdayYear" placeholder="YYYY">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="saveNewContact()" style="width: 100%; padding: 12px;">บันทึกข้อมูลใหม่</button>
+                </div>
+
+                <hr style="margin: 40px 0; border: none; border-top: 2px solid #eee;">
+
+                <h3 style="font-size: 16px; margin-bottom: 20px; color: #1b3a5c;">ลบติดต่อ</h3>
+
+                <div class="form-group">
+                    <label>เลือกหมวดหมู่ (Directory)</label>
+                    <select id="deleteDirectorySelect" onchange="loadContactsForDelete()">
+                        <option value="">-- เลือกหมวดหมู่ --</option>
+                        <option value="contacts_abc7">ABC7 - International</option>
+                        <option value="contacts_ndc57">NDC57 - สัตว์</option>
+                    </select>
+                </div>
+
+                <div class="search-box">
+                    <input type="text" id="deleteContactSearchInput" placeholder="ค้นหา Contact...">
+                    <button onclick="searchContactsForDelete()">ค้นหา</button>
+                </div>
+
+                <div id="deleteContactsTableContainer" class="table-container">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📁</div>
+                        <p>เลือกหมวดหมู่เพื่อดูข้อมูล Contact</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Add Phone -->
+<div id="addPhoneModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>เพิ่มเบอรโทรศัพท์</h3>
+            <button class="modal-close" onclick="closeAddPhoneModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>เบอรโทรศัพท์*</label>
+                <input type="text" id="newPhoneInput" placeholder="0XX-XXX-XXXX">
+            </div>
+            <div class="form-group">
+                <label>เลือกหมวดหมู่ (Directory)*</label>
+                <select id="newPhoneDirectory">
+                    <option value="">-- เลือกหมวดหมู่ --</option>
+                    <option value="contacts_abc7">ABC7 - International</option>
+                    <option value="contacts_ndc57">NDC57 - สัตว์</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>หมวดกลุ่ม (Group)*</label>
+                <select id="newPhoneGroup">
+                    <option value="">-- เลือกหมวดกลุ่ม --</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeAddPhoneModal()" style="background: #ccc; color: #333;">ยกเลิก</button>
+            <button class="btn btn-primary" onclick="saveNewPhone()">บันทึก</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Edit Contact -->
+<div id="editContactModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>แก้ไขข้อมูล Contact</h3>
+            <button class="modal-close" onclick="closeEditContactModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>คำนำหน้า (Prefix)</label>
+                    <input type="text" id="editPrefix">
+                </div>
+                <div class="form-group">
+                    <label>ชื่อไทย (Thai Name)*</label>
+                    <input type="text" id="editTname" required>
+                </div>
+                <div class="form-group">
+                    <label>ชื่ออังกฤษ (English Name)</label>
+                    <input type="text" id="editEname">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>ชื่อเล่น (Nickname)</label>
+                    <input type="text" id="editNickname">
+                </div>
+                <div class="form-group">
+                    <label>ตำแหน่ง (Position)</label>
+                    <input type="text" id="editPosition">
+                </div>
+                <div class="form-group">
+                    <label>บริษัท (Company)</label>
+                    <input type="text" id="editCompany">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>ที่อยู่ (Address)</label>
+                <textarea id="editAddress"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>มือถือ 1 (Mobile 1)</label>
+                    <input type="text" id="editMobile1">
+                </div>
+                <div class="form-group">
+                    <label>มือถือ 2 (Mobile 2)</label>
+                    <input type="text" id="editMobile2">
+                </div>
+                <div class="form-group">
+                    <label>โทรศัพท์ (Tel)</label>
+                    <input type="text" id="editTel">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>โทรสาร (Fax)</label>
+                    <input type="text" id="editFax">
+                </div>
+                <div class="form-group">
+                    <label>อีเมล (Email)</label>
+                    <input type="email" id="editEmail">
+                </div>
+                <div class="form-group">
+                    <label>หมายเหตุ (Remark)</label>
+                    <input type="text" id="editRemark">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>วันเกิด (Birth Day)</label>
+                    <input type="number" id="editBirthdayDay" min="1" max="31">
+                </div>
+                <div class="form-group">
+                    <label>เดือนเกิด (Birth Month)</label>
+                    <input type="number" id="editBirthdayMonth" min="1" max="12">
+                </div>
+                <div class="form-group">
+                    <label>ปีเกิด (Birth Year)</label>
+                    <input type="number" id="editBirthdayYear">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>หมวดกลุ่ม (Group)</label>
+                <input type="text" id="editGroupId" readonly style="background: #f5f5f5;">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-danger" onclick="deleteContact()" id="deleteContactBtn">ลบ</button>
+            <button class="btn" onclick="closeEditContactModal()" style="background: #ccc; color: #333;">ยกเลิก</button>
+            <button class="btn btn-primary" onclick="saveEditedContact()">บันทึก</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Confirmation Dialog -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3 id="confirmTitle">ยืนยัน</h3>
+            <button class="modal-close" onclick="closeConfirmModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p id="confirmMessage"></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" onclick="closeConfirmModal()" style="background: #ccc; color: #333;">ยกเลิก</button>
+            <button class="btn btn-danger" id="confirmActionBtn" onclick="executeConfirmAction()">ลบ</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, doc, getDocs, getDoc, setDoc, updateDoc, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBGhe_o42_PaQUjwXFzFk3R8w-XIEMihm0",
+        authDomain: "web-contact2026.firebaseapp.com",
+        projectId: "web-contact2026",
+        storageBucket: "web-contact2026.firebasestorage.app",
+        messagingSenderId: "251998151111",
+        appId: "1:251998151111:web:d83ac2392b984422b739e2",
+        measurementId: "G-N3LJ7DQBJS"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Global variables
+    let currentUser = null;
+    let allPhones = [];
+    let allContacts = [];
+    let allDeleteContacts = [];
+    let editingContactId = null;
+    let editingDirectory = null;
+    let confirmAction = null;
+
+    const ADMIN_PHONES = ["0944456396"];
+
+    const ABC7_GROUPS = [
+        { id: "01", name: "Berlin" },
+        { id: "02", name: "London" },
+        { id: "03", name: "Moscow" },
+        { id: "04", name: "New York" },
+        { id: "05", name: "Paris" },
+        { id: "06", name: "Rome" },
+        { id: "07", name: "Seoul" },
+        { id: "08", name: "Shanghai" },
+        { id: "09", name: "Sydney" },
+        { id: "10", name: "Tokyo" }
+    ];
+
+    const NDC57_GROUPS = [
+        { id: "01", name: "กวาง" },
+        { id: "02", name: "ไก่ฟ้า" },
+        { id: "03", name: "ช้าง" },
+        { id: "04", name: "นกเค้าแมว" },
+        { id: "05", name: "นกยูง" },
+        { id: "06", name: "นกหัวขวาน" },
+        { id: "07", name: "วัว" },
+        { id: "08", name: "สิงโต" },
+        { id: "09", name: "เสือ" },
+        { id: "10", name: "เหยี่ยว" },
+        { id: "11", name: "คณาจารย์" }
+    ];
+
+    // Check access on load
+    async function checkAccess() {
+        const user = sessionStorage.getItem('backoffice_user');
+
+        if (!user) {
+            showAccessDenied();
+            return;
+        }
+
+        currentUser = JSON.parse(user);
+
+        if (!ADMIN_PHONES.includes(currentUser.phone)) {
+            showAccessDenied();
+            return;
+        }
+
+        showMainPanel();
+        document.getElementById('userPhone').textContent = currentUser.phone;
+        loadPhones();
+    }
+
+    function showAccessDenied() {
+        document.getElementById('mainPanel').style.display = 'none';
+        document.getElementById('accessDenied').style.display = 'flex';
+    }
+
+    function showMainPanel() {
+        document.getElementById('mainPanel').style.display = 'flex';
+        document.getElementById('accessDenied').style.display = 'none';
+    }
+
+    function goBack() {
+        window.location.href = '/';
+    }
+
+    function logout() {
+        sessionStorage.removeItem('backoffice_user');
+        goBack();
+    }
+
+    // Tab switching
+    window.switchTab = function(e, tabName) {
+        e.preventDefault();
+
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Remove active class from all nav links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+
+        // Show selected tab
+        document.getElementById(tabName).classList.add('active');
+        event.target.closest('a').classList.add('active');
+    };
+
+    // Manage Access Tab Functions
+    async function loadPhones() {
+        const container = document.getElementById('phonesTableContainer');
+        container.innerHTML = '<div class="loading"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div>';
+
+        try {
+            const phonesRef = collection(db, 'admin_phones');
+            const snapshot = await getDocs(phonesRef);
+
+            allPhones = [];
+            snapshot.forEach(doc => {
+                allPhones.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            renderPhonesTable(allPhones);
+        } catch (error) {
+            console.error('Error loading phones:', error);
+            showToast('เกิดข้อผิดพลาด: ' + error.message, 'error');
+        }
+    }
+
+    function renderPhonesTable(phones) {
+        const container = document.getElementById('phonesTableContainer');
+
+        if (phones.length === 0) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📱</div><p>ไม่มีข้อมูลเบอรโทรศัพท์</p></div>';
+            return;
+        }
+
+        let html = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>เบอรโทรศัพท์</th>
+                        <th>หมวดหมู่</th>
+                        <th>หมวดกลุ่ม</th>
+                        <th>การดำเนินการ</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        phones.forEach(phone => {
+            const dirName = phone.directory === 'contacts_abc7' ? 'ABC7' : 'NDC57';
+            html += `
+                <tr>
+                    <td>${phone.phone}</td>
+                    <td><span class="badge">${dirName}</span></td>
+                    <td>${phone.group || '-'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary btn-sm" onclick="editPhone('${phone.id}')">แก้ไข</button>
+                            <button class="btn btn-danger btn-sm" onclick="confirmDeletePhone('${phone.id}', '${phone.phone}')">ลบ</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    window.searchPhones = function() {
+        const search = document.getElementById('phoneSearchInput').value.toLowerCase();
+        const filtered = allPhones.filter(phone =>
+            phone.phone.toLowerCase().includes(search)
+        );
+        renderPhonesTable(filtered);
+    };
+
+    window.openAddPhoneModal = function() {
+        document.getElementById('newPhoneInput').value = '';
+        document.getElementById('newPhoneDirectory').value = '';
+        document.getElementById('newPhoneGroup').innerHTML = '<option value="">-- เลือกหมวดกลุ่ม --</option>';
+        document.getElementById('addPhoneModal').classList.add('active');
+    };
+
+    window.closeAddPhoneModal = function() {
+        document.getElementById('addPhoneModal').classList.remove('active');
+    };
+
+    document.getElementById('newPhoneDirectory')?.addEventListener('change', function() {
+        const groups = this.value === 'contacts_abc7' ? ABC7_GROUPS : NDC57_GROUPS;
+        const select = document.getElementById('newPhoneGroup');
+        select.innerHTML = '<option value="">-- เลือกหมวดกลุ่ม --</option>';
+        groups.forEach(group => {
+            select.innerHTML += `<option value="${group.id}">${group.name}</option>`;
+        });
+    });
+
+    window.saveNewPhone = async function() {
+        const phone = document.getElementById('newPhoneInput').value.trim();
+        const directory = document.getElementById('newPhoneDirectory').value;
+        const group = document.getElementById('newPhoneGroup').value;
+
+        if (!phone || !directory || !group) {
+            showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
+            return;
+        }
+
+        try {
+            const phoneRef = collection(db, 'admin_phones');
+            await setDoc(doc(phoneRef), {
+                phone,
+                directory,
+                group,
+                createdAt: new Date().toISOString()
+            });
+
+            showToast('เพิ่มเบอรโทรศัพท์สำเร็จ', 'success');
+            closeAddPhoneModal();
+            loadPhones();
+        } catch (error) {
+            console.error('Error saving phone:', error);
+            showToast('เกิดข้อผิดพลาด: ' + error.message, 'error');
+        }
+    };
+
+    window.editPhone = async function(phoneId) {
+        const phone = allPhones.find(p => p.id === phoneId);
+        if (!phone) return;
+
+        document.getElementById('newPhoneInput').value = phone.phone;
+        document.getElementById('newPhoneDirectory').value = phone.directory;
+
+        const groups = phone.directory === 'contacts_abc7' ? ABC7_GROUPS : NDC57_GROUPS;
+        const select = document.getElementById('newPhoneGroup');
+        select.innerHTML = '<option value="">-- เลือกหมวดกลุ่ม --</option>';
+        groups.forEach(group => {
+            select.innerHTML += `<option value="${group.id}">${group.name}</option>`;
+        });
+        select.value = phone.group;
+
+        // Change action to update
+        const saveBtn = document.querySelector('#addPhoneModal .modal-footer .btn-primary');
+        saveBtn.textContent = 'อัพเดท';
+        saveBtn.onclick = async function() {
+            const newPhone = document.getElementById('newPhoneInput').value.trim();
+            const newDir = document.getElementById('newPhoneDirectory').value;
+            const newGroup = document.getElementById('newPhoneGroup').value;
+
+            if (!newPhone || !newDir || !newGroup) {
+                showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
+                return;
+            }
+
+            try {
+                await updateDoc(doc(db, 'admin_phones', phoneId), {
+                    phone: newPhone,
+                    directory: newDir,
+                    group: newGroup
+                });
+
+                showToast('อัพเดทข้อมูลสำเร็จ', 'success');
+                closeAddPhoneModal();
+                loadPhones();
+                saveBtn.textContent = 'บันทึก';
+                saveBtn.onclick = window.saveNewPhone;
+            } catch (error) {
+                console.error('Error updating phone:', error);
+                showToast('เกิดข้อผิดพลาด: ' + error.message, 'error');
+            }
+        };
+
+        document.getElementById('addPhoneModal').classList.add('active');
+    };
+
+    window.confirmDeletePhone = function(phoneId, phoneNumber) {
+        confirmAction = async function() {
+            try {
+                await deleteDoc(doc(db, 'admin_phones', phoneId));
+                showToast('ลบเบอรโทรศัพท์สำเร็จ', 'success');
+                closeConfirmModal();
+                loadPhones();
+            } catch (error) {
+                console.error('Error deleting phone:', error);
+                showToast('เกิดข้อผิดพลาด: ' + error.message, 'error');
+            }
+        };
+
+        document.getElementById('confirmTitle').textContent = 'ยืนยันการลบ';
+        document.getElementById('confirmMessage').textContent = `ต้องการลบเบอรโทรศัพท์ "${phoneNumber}" หรือไม่?`;
+        document.getElementById('confirmModal').classList.add('active');
+    };
+
+    // Edit Contacts Tab Functions
+    window.loadContactsForDirectory = async function() {
+        const directory = document.getElementById('directorySelect').value;
+
+        if (!directory) {
+            document.getElementById('contactsTableContainer').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📁</div><p>เลือกหมวดหมู่เพื่อดูข้อมูล Contact</p></div>';
+            return;
+        }
+
+        const container = document.getElementById('contactsTableContainer');
+        container.innerHTML = '<div class="loading"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div>';
+
+        try {
+            const contactsRef = collection(db, directory);
+            const q = query(contactsRef, orderBy('tname'));
+            const snapshot = await getDocs(q);
+
+            allContacts = [];
+            snapshot.forEach(doc => {
+                allContacts.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            renderContactsTable(allContacts);
+        } catch (error) {
+            console.error('Error loading contacts:', error);
+            showToast('เกิดข้อผิดพลาด: ' + error.message, 'error');
+        }
+    };
+
+    function renderContactsTable(contacts) {
+        const container = document.getElementById('contactsTableContainer');
+
+        if (contacts.length === 0) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>ไม่มีข้อมูล Contact</p></div>';
+            return;
+        }
+
+        let html = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>ชื่อไทย</th>
+                        <th>ชื่ออังกฤษ</th>
+                        <th>ตำแหน่ง</th>
+                        <th>มือถือ</th>
+                        <th>อีเมล</th>
+                        <th>การดำเนินการ</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        contacts.forEach(contact => {
+            html += `
+                <tr>
+                    <td>${contact.tname || '-'}</td>
+                    <td>${contact.ename || '-'}</td>
+                    <td>${contact.position || '-'}</td>
+                    <td>${contact.mobile1 || '-'}</td>
+                    <td>${contact.email || '-'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary btn-sm" onclick="openEditContactModal('${contact.id}')">แก้ไข</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    window.searchContacts = function() {
+        const search = document.getElementById('contactSearchInput').value.toLowerCase();
+        const filtered = allContacts.filter(contact =>
+            (contact.tname && contact.tname.toLowerCase().includes(search)) ||
+            (contact.ename && contact.ename.toLowerCase().includes(search)) ||
+            (contact.mobile1 && contact.mobile1.includes(search)) ||
+            (contact.email && contact.email.toLowerCase().includes(search))
+        );
+        renderContactsTable(filtered);
+    };
+
+    window.openEditContactModal = async function(contactId) {
+        const directory = document.getElementById('directorySelect').value;
+        const contact = allContacts.find(c => c.id === contactId);
+
+        if (!contact) return;
+
+        editingContactId = contactId;
+        editingDirectory = directory;
+
+        document.getElementById('editPrefix').value = contact.prefix || '';
+        document.getElementById('editTname').value = contact.tname || '';
+        document.getElementById('editEname').value = contact.ename || '';
+        document.getElementById('editNickname').value = contact.nickname || '';
+        document.getElementById('editPosition').value = contact.position || '';
+        document.getElementById('editCompany').value = contact.company || '';
+        document.getElementById('editAddress').value = contact.address || '';
+        document.getElementById('editMobile1').value = contact.mobile1 || '';
+        document.getElementById('editMobile2').value = contact.mobile2 || '';
+        document.getElementById('editTel').value = contact.tel || '';
+        document.getElementById('editFax').value = contact.fax || '';
+        document.getElementById('editEmail').value = contact.email || '';
+        document.getElementById('editRemark').value = contact.remark || '';
+        document.getElementById('editBirthdayDay').value = contact.hbd_day || '';
+        document.getElementById('editBirthdayMonth').value = contact.hbd_month || '';
+        document.getElementById('editBirthdayYear').value = contact.hbd_year || '';
+        document.getElementById('editGroupId').value = contact.group_id || '';
+
+        document.getElementById('editContactModal').classList.add('active');
+    };
+
+    window.closeEditContactModal = function() {
+        document.getElementById('editContactModal').classList.remove('active');
+        editingContactId = null;
+        editingDirectory = null;
+    };
+
+    window.saveEditedContact = async function() {
+        const tname = document.getElementById('editTname').value.trim();
+
+        if (!tname) {
+            showToast('กรุณากรอกชื่อไทย', 'error');
+            return;
+        }
+
+        try {
+            const contactData = {
+                prefix: document.getElementById('editPrefix').value || '',
+                tname: tname,
+                ename: document.getElementById('editEname').value || '',
+                nickname: document.getElementById('editNickname').value || '',
+                position: document.getElementById('editPosition').value || '',
+                company: document.getElementById('editCompany').value || '',
+                address: document.getElementById('editAddress').value || '',
+                mobile1: document.getElementById('editMobile1').value || '',
+                mobile2: document.getElementById('editMobile2').value || '',
+                tel: document.getElementById('editTel').value || '',
+                fax: document.getElementById('editFax').value || '',
+                email: document.getElementById('editEmail').value || '',
+                remark: document.getElementById('editRemark').value || '',
+                hbd_day: document.getElementById('editBirthdayDay').value || '',
+                hbd_month: document.getElementById('editBirthdayMonth').value || '',
+                hbd_year: document.getElementById('editBirthdayYear').value || ''
+            };
+
+            await updateDoc(doc(db, editingDirectory, editingContactId), contactData);
+            showToast('บันทึกข้อมูลสำเร็จ', 'success');
+            closeEditContactModal();
+            loadContactsForDirectory();
+        } catch (error) {
+            console.error('Error saving contact:', error);
+            showToast('เกิดข้อผิดพลาด: ' + error.message, 'error');
+        }
+    };
+
+    window.deleteContact = function() {
+        confirmAction = async function() {
+            try {
+                await deleteDoc(doc(db, editingDirectory, editingContactId));
+                showToast('ลบข้อมูลสำเร็จ', 'success');
+                closeConfirmModal();
+                closeEditContactModal();
+                loadContactsForDirectory();
+            } catch (error) {
+                console.error('Error deleting contact:', error);
+                showToast('เกิดข้อผิดพลาด: ' + error.message, 'error');
+            }
+        };
+
+        document.getElementById('confirmTitle').textContent = 'ยืนยันการลบ';
+        document.getElementById('confirmMessage').textContent = 'ต้องการลบข้อมูล Contact นี้หรือไม่? การดำเนินการนี้ไม่สามารถยกเลิกได้';
+        document.getElementById('confirmModal').classList.add('active');
+    };
+
+    // Add/Delete Contact Tab Functions
+    window.updateGroupOptions = function() {
+        const directory = document.getElementById('addDirectorySelect').value;
+        const groups = directory === 'contacts_abc7' ? ABC7_GROUPS : NDC57_GROUPS;
+        const select = document.getElementById('addGroupSelect');
+        select.innerHTML = '<option value="">-- เลือกหมวดกลุ่ม --</option>';
+        groups.forEach(group => {
+            select.innerHTML += `<option value="${group.id}">${group.name}</option>`;
+        });
+    };
+
+    window.saveNewContact = async function() {
+        const directory = document.getElementById('addDirectorySelect').value;
+        const tname = document.getElementById('addTname').value.trim();
+        const groupId = document.getElementById('addGroupSelect').value;
+
+        if (!directory || !tname || !groupId) {
+            showToast('กรุณากรอกข้อมูลที่จำเป็น', 'error');
+            return;
+        }
+
+        try {
+            // Generate CID (you can customize this logic)
+            const timestamp = Date.now().toString().slice(-6);
+            const cid = 'C' + timestamp;
+
+            const contactData = {
+                cid: cid,
+                group_id: groupId,
+                prefix: document.getElementById('addPrefix').value || '',
+                tname: tname,
+                ename: document.getElementById('addEname').value || '',
+                nickname: document.getElementById('addNickname').value || '',
+                position: document.getElementById('addPosition').value || '',
+                company: document.getElementById('addCompany').value || '',
+                address: document.getElementById('addAddress').value || '',
+                mobile1: document.getElementById('addMobile1').value || '',
+                mobile2: document.getElementById('addMobile2').value || '',
+                tel: document.getElementById('addTel').value || '',
+                fax: document.getElementById('addFax').value || '',
+                email: document.getElementById('addEmail').value || '',
+                remark: document.getElementById('addRemark').value || '',
+                hbd_day: document.getElementById('addBirthdayDay').value || '',
+                hbd_month: document.getElementById('addBirthdayMonth').value || '',
+                hbd_year: document.getElementById('addBirthdayYear').value || '',
+                photo: '',
+                createdAt: new Date().toISOString()
+            };
+
+            const contactsRef = collection(db, directory);
+            await setDoc(doc(contactsRef, cid), contactData);
+
+            showToast('เพิ่ม Contact สำเร็จ', 'success');
+
+            // Clear form
+            document.getElementById('addDirectorySelect').value = '';
+            document.getElementById('addGroupSelect').innerHTML = '<option value="">-- เลือกหมวดกลุ่ม --</option>';
+            document.getElementById('addPrefix').value = '';
+            document.getElementById('addTname').value = '';
+            document.getElementById('addEname').value = '';
+            document.getElementById('addNickname').value = '';
+            document.getElementById('addPosition').value = '';
+            document.getElementById('addCompany').value = '';
+            document.getElementById('addAddress').value = '';
+            document.getElementById('addMobile1').value = '';
+            document.getElementById('addMobile2').value = '';
+            document.getElementById('addTel').value = '';
+            document.getElementById('addFax').value = '';
+            document.getElementById('addEmail').value = '';
+            document.getElementById('addRemark').value = '';
+            document.getElementById('addBirthdayDay').value = '';
+            document.getElementById('addBirthdayMonth').value = '';
+            document.getElementById('addBirthdayYear').value = '';
+
+        } catch (error) {
+            console.error('Error adding contact:', error);
+            showToast('เกิดข้อผิดพลาด: ' + error.message, 'error');
+        }
+    };
+
+    window.loadContactsForDelete = async function() {
+        const directory = document.getElementById('deleteDirectorySelect').value;
+
+        if (!directory) {
+            document.getElementById('deleteContactsTableContainer').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📁</div><p>เลือกหมวดหมู่เพื่อดูข้อมูล Contact</p></div>';
+            return;
+        }
+
+        const container = document.getElementById('deleteContactsTableContainer');
+        container.innerHTML = '<div class="loading"><div class="spinner"></div><p>กำลังโหลดข้อมูล...</p></div>';
+
+        try {
+            const contactsRef = collection(db, directory);
+            const q = query(contactsRef, orderBy('tname'));
+            const snapshot = await getDocs(q);
+
+            allDeleteContacts = [];
+            snapshot.forEach(doc => {
+                allDeleteContacts.push({
+                    id: doc.id,
+                    directory: directory,
+                    ...doc.data()
+                });
+            });
+
+            renderDeleteContactsTable(allDeleteContacts);
+        } catch (error) {
+            console.error('Error loading contacts:', error);
+            showToast('เกิดข้อผิดพลาด: ' + error.message, 'error');
+        }
+    };
+
+    function renderDeleteContactsTable(contacts) {
+        const container = document.getElementById('deleteContactsTableContainer');
+
+        if (contacts.length === 0) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>ไม่มีข้อมูล Contact</p></div>';
+            return;
+        }
+
+        let html = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>ชื่อไทย</th>
+                        <th>ชื่ออังกฤษ</th>
+                        <th>ตำแหน่ง</th>
+                        <th>มือถือ</th>
+                        <th>การดำเนินการ</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        contacts.forEach(contact => {
+            html += `
+                <tr>
+                    <td>${contact.tname || '-'}</td>
+                    <td>${contact.ename || '-'}</td>
+                    <td>${contact.position || '-'}</td>
+                    <td>${contact.mobile1 || '-'}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-danger btn-sm" onclick="confirmDeleteContactForDelete('${contact.id}', '${contact.directory}', '${contact.tname}')">ลบ</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    window.searchContactsForDelete = function() {
+        const search = document.getElementById('deleteContactSearchInput').value.toLowerCase();
+        const filtered = allDeleteContacts.filter(contact =>
+            (contact.tname && contact.tname.toLowerCase().includes(search)) ||
+            (contact.ename && contact.ename.toLowerCase().includes(search)) ||
+            (contact.mobile1 && contact.mobile1.includes(search)) ||
+            (contact.email && contact.email.toLowerCase().includes(search))
+        );
+        renderDeleteContactsTable(filtered);
+    };
+
+    window.confirmDeleteContactForDelete = function(contactId, directory, tname) {
+        confirmAction = async function() {
+            try {
+                await deleteDoc(doc(db, directory, contactId));
+                showToast('ลบข้อมูลสำเร็จ', 'success');
+                closeConfirmModal();
+                loadContactsForDelete();
+            } catch (error) {
+                console.error('Error deleting contact:', error);
+                showToast('เกิดข้อผิดพลาด: ' + error.message, 'error');
+            }
+        };
+
+        document.getElementById('confirmTitle').textContent = 'ยืนยันการลบ';
+        document.getElementById('confirmMessage').textContent = `ต้องการลบ "${tname}" หรือไม่? การดำเนินการนี้ไม่สามารถยกเลิกได้`;
+        document.getElementById('confirmModal').classList.add('active');
+    };
+
+    // Confirmation Modal
+    window.closeConfirmModal = function() {
+        document.getElementById('confirmModal').classList.remove('active');
+        confirmAction = null;
+    };
+
+    window.executeConfirmAction = function() {
+        if (confirmAction) {
+            confirmAction();
+        }
+    };
+
+    // Import Initial Data
+    window.importInitialData = function() {
+        showToast('กำลังเตรียม import... (ตัวอย่าง)', 'success');
+        // This would be connected to an actual import script
+        // For now, show a message about how to set it up
+        alert('Import Initial Data\n\nสำหรับการ import ข้อมูลเริ่มต้น:\n1. เตรียมไฟล์ข้อมูลในรูปแบบ JSON\n2. ดับเบิลคลิกที่ปุ่ม import\n3. เลือกไฟล์ข้อมูล\n\nหรือติดต่อผู้ดูแลระบบสำหรับการ sync ข้อมูล');
+    };
+
+    // Toast Notification
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type === 'error' ? 'error' : ''}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    }
+
+    window.showToast = showToast;
+
+    // Initialize
+    checkAccess();
+</script>
+
+</body>
+</html>
