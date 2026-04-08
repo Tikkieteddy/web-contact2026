@@ -471,6 +471,35 @@
             font-weight: 600;
         }
 
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-right: 22px;
+        }
+
+        th.sortable:hover {
+            background: #e8e8e8;
+        }
+
+        th.sortable::after {
+            content: '⇅';
+            position: absolute;
+            right: 6px;
+            color: #aaa;
+            font-size: 12px;
+        }
+
+        th.sortable.asc::after {
+            content: '▲';
+            color: #1b3a5c;
+        }
+
+        th.sortable.desc::after {
+            content: '▼';
+            color: #1b3a5c;
+        }
+
         .section-title {
             font-size: 18px;
             font-weight: 600;
@@ -971,13 +1000,15 @@
     }
 
     function goBack() {
-        window.location.href = '/';
+        window.location.href = '/backoffice/';
     }
+    window.goBack = goBack;
 
     function logout() {
         sessionStorage.removeItem('backoffice_user');
         goBack();
     }
+    window.logout = logout;
 
     // Tab switching
     window.switchTab = function(e, tabName) {
@@ -1240,7 +1271,36 @@
         }
     };
 
-    function renderContactsTable(contacts) {
+    let contactSortField = 'tname';
+    let contactSortDir = 'asc';
+
+    function sortContacts(field) {
+        if (contactSortField === field) {
+            contactSortDir = contactSortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+            contactSortField = field;
+            contactSortDir = 'asc';
+        }
+        const sorted = [...allContacts].sort((a, b) => {
+            let va = '', vb = '';
+            const directory = document.getElementById('directorySelect').value;
+            const dirKey = directory === 'contacts_abc7' ? 'abc7' : 'ndc57';
+            if (field === 'group') {
+                va = getGroupName(dirKey, a.group_id);
+                vb = getGroupName(dirKey, b.group_id);
+            } else {
+                va = (a[field] || '').toLowerCase();
+                vb = (b[field] || '').toLowerCase();
+            }
+            if (va < vb) return contactSortDir === 'asc' ? -1 : 1;
+            if (va > vb) return contactSortDir === 'asc' ? 1 : -1;
+            return 0;
+        });
+        renderContactsTable(sorted, true);
+    }
+    window.sortContacts = sortContacts;
+
+    function renderContactsTable(contacts, skipSortReset) {
         const container = document.getElementById('contactsTableContainer');
         const directory = document.getElementById('directorySelect').value;
 
@@ -1251,16 +1311,21 @@
 
         const dirKey = directory === 'contacts_abc7' ? 'abc7' : 'ndc57';
 
+        function thClass(field) {
+            if (contactSortField === field) return `sortable ${contactSortDir}`;
+            return 'sortable';
+        }
+
         let html = `
             <table>
                 <thead>
                     <tr>
                         <th style="width:60px">รูป</th>
-                        <th>หมวดกลุ่ม</th>
-                        <th>ชื่อไทย</th>
-                        <th>ชื่ออังกฤษ</th>
-                        <th>ตำแหน่ง</th>
-                        <th>มือถือ</th>
+                        <th class="${thClass('group')}" onclick="sortContacts('group')">หมวดกลุ่ม</th>
+                        <th class="${thClass('tname')}" onclick="sortContacts('tname')">ชื่อไทย</th>
+                        <th class="${thClass('ename')}" onclick="sortContacts('ename')">ชื่ออังกฤษ</th>
+                        <th class="${thClass('position')}" onclick="sortContacts('position')">ตำแหน่ง</th>
+                        <th class="${thClass('mobile1')}" onclick="sortContacts('mobile1')">มือถือ</th>
                         <th>การดำเนินการ</th>
                     </tr>
                 </thead>
