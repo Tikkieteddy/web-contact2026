@@ -1,502 +1,75 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Directory - Backoffice</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Directory - Backoffice</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',-apple-system,sans-serif;background:linear-gradient(135deg,#1b3a5c 0%,#2d5a8c 100%);min-height:100vh;padding:20px}
 
-        html {
-            width: 100%;
-            height: 100%;
-        }
+/* Login */
+#loginPage{max-width:400px;margin:80px auto;background:#fff;border-radius:16px;padding:40px 32px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
+#loginPage h1{font-size:22px;color:#1b3a5c;margin-bottom:6px}
+#loginPage p{font-size:13px;color:#888;margin-bottom:30px}
+#loginPage .icon{width:70px;height:70px;background:linear-gradient(135deg,#1b3a5c,#2d5a8c);border-radius:14px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:34px}
+#loginPage label{display:block;text-align:left;font-size:13px;color:#555;margin-bottom:8px;font-weight:600}
+#loginPage input{width:100%;padding:14px 16px;border:2px solid #dde;border-radius:10px;font-size:18px;letter-spacing:1px;outline:none;text-align:center}
+#loginPage input:focus{border-color:#1b3a5c}
+#loginPage .btn{width:100%;padding:14px;background:#1b3a5c;color:#fff;border:none;border-radius:10px;font-size:16px;cursor:pointer;margin-top:20px;font-weight:600}
+#loginPage .btn:hover{background:#2d5a8c}
+#loginPage .error{color:#c33;background:#fee;padding:10px;border-radius:8px;margin-top:12px;font-size:13px;display:none}
 
-        body {
-            width: 100%;
-            min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #1b3a5c 0%, #2d5a8c 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+/* Menu */
+#menuPage{max-width:500px;margin:60px auto;text-align:center;display:none}
+#menuPage .user-info{background:#fff;border-radius:16px;padding:30px;margin-bottom:24px;box-shadow:0 10px 40px rgba(0,0,0,.2)}
+#menuPage .user-info h2{font-size:20px;color:#1b3a5c;margin-bottom:4px}
+#menuPage .user-info p{color:#888;font-size:14px}
+#menuPage .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+#menuPage .dir-card{background:#fff;border-radius:14px;padding:28px 20px;cursor:pointer;box-shadow:0 6px 24px rgba(0,0,0,.15);transition:transform .2s}
+#menuPage .dir-card:hover{transform:translateY(-3px)}
+#menuPage .dir-card h3{font-size:18px;margin-bottom:4px}
+#menuPage .dir-card p{font-size:12px;color:#888}
+#menuPage .dir-card.abc7 h3{color:#1b3a5c}
+#menuPage .dir-card.ndc57 h3{color:#9a7b4f}
+#menuPage .logout-btn{margin-top:20px;padding:10px 24px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;cursor:pointer;font-size:13px}
+#menuPage .logout-btn:hover{background:rgba(255,255,255,.3)}
 
-        .container {
-            width: 100%;
-            max-width: 400px;
-        }
-
-        /* === LOGIN STATE === */
-        .login-state {
-            display: block;
-            width: 100%;
-        }
-
-        .login-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 48px 32px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            width: 100%;
-        }
-
-        .logo-area {
-            margin-bottom: 32px;
-        }
-
-        .logo-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #1b3a5c, #2d5a8c);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            font-size: 40px;
-            color: white;
-            box-shadow: 0 8px 24px rgba(27, 58, 92, 0.2);
-        }
-
-        .logo-text h1 {
-            font-size: 24px;
-            color: #1b3a5c;
-            margin-bottom: 8px;
-        }
-
-        .logo-text p {
-            font-size: 13px;
-            color: #666;
-        }
-
-        .phone-input-group {
-            margin: 40px 0;
-        }
-
-        .phone-input-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 12px;
-            text-align: left;
-        }
-
-        .phone-input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .phone-icon {
-            position: absolute;
-            left: 14px;
-            font-size: 18px;
-            color: #9a7b4f;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        #phoneInput {
-            width: 100%;
-            padding: 14px 14px 14px 48px;
-            font-size: 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 1px;
-        }
-
-        #phoneInput:focus {
-            outline: none;
-            border-color: #9a7b4f;
-            box-shadow: 0 0 0 3px rgba(154, 123, 79, 0.1);
-            background-color: #fafafa;
-        }
-
-        #phoneInput::placeholder {
-            color: #aaa;
-        }
-
-        .error-message {
-            display: none;
-            margin-top: 12px;
-            padding: 12px;
-            background-color: #fee;
-            color: #c33;
-            border-radius: 8px;
-            font-size: 13px;
-            animation: slideDown 0.3s ease-out;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 14px;
-            margin-top: 24px;
-            background: linear-gradient(135deg, #1b3a5c, #2d5a8c);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(27, 58, 92, 0.3);
-        }
-
-        .submit-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(27, 58, 92, 0.4);
-        }
-
-        .submit-btn:active:not(:disabled) {
-            transform: translateY(0);
-        }
-
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .loading-spinner {
-            display: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-        }
-
-        .submit-btn.loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .submit-btn.loading .loading-spinner {
-            display: block;
-        }
-
-        .submit-btn.loading span {
-            display: none;
-        }
-
-        /* === MENU STATE === */
-        .menu-state {
-            display: none;
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        .menu-card {
-            background: white;
-            border-radius: 16px;
-            padding: 40px 32px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .user-profile {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 32px;
-            border-bottom: 1px solid #e8e8e8;
-        }
-
-        .user-photo {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, #1b3a5c, #9a7b4f);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            font-size: 48px;
-            color: white;
-            overflow: hidden;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        }
-
-        .user-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .user-name {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1b3a5c;
-            margin-bottom: 4px;
-        }
-
-        .user-nickname {
-            font-size: 13px;
-            color: #999;
-        }
-
-        .directory-options {
-            display: grid;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .directory-card {
-            padding: 24px;
-            border: 2px solid #e8e8e8;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            background: #fafafa;
-        }
-
-        .directory-card.abc7 {
-            border-color: #1b3a5c;
-            background: linear-gradient(135deg, rgba(27, 58, 92, 0.05), rgba(27, 58, 92, 0.02));
-        }
-
-        .directory-card.abc7:hover {
-            border-color: #1b3a5c;
-            box-shadow: 0 8px 24px rgba(27, 58, 92, 0.15);
-            transform: translateY(-4px);
-        }
-
-        .directory-card.ndc57 {
-            border-color: #9a7b4f;
-            background: linear-gradient(135deg, rgba(154, 123, 79, 0.05), rgba(154, 123, 79, 0.02));
-        }
-
-        .directory-card.ndc57:hover {
-            border-color: #9a7b4f;
-            box-shadow: 0 8px 24px rgba(154, 123, 79, 0.15);
-            transform: translateY(-4px);
-        }
-
-        .directory-name {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .directory-card.abc7 .directory-name {
-            color: #1b3a5c;
-        }
-
-        .directory-card.ndc57 .directory-name {
-            color: #9a7b4f;
-        }
-
-        .directory-group {
-            font-size: 13px;
-            color: #666;
-        }
-
-        .logout-btn {
-            width: 100%;
-            padding: 12px;
-            background: #f5f5f5;
-            color: #666;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background: #eee;
-            color: #333;
-        }
-
-        /* === ANIMATIONS === */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* === RESPONSIVE === */
-        @media (max-width: 480px) {
-            .login-card,
-            .menu-card {
-                padding: 32px 24px;
-            }
-
-            .logo-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 32px;
-            }
-
-            .logo-text h1 {
-                font-size: 20px;
-            }
-
-            .user-photo {
-                width: 100px;
-                height: 100px;
-                font-size: 40px;
-            }
-
-            .user-name {
-                font-size: 18px;
-            }
-
-            .directory-card {
-                padding: 20px;
-            }
-
-            .directory-name {
-                font-size: 18px;
-            }
-        }
-
-        /* Hidden state */
-        .hidden {
-            display: none !important;
-        }
-    </style>
+@media(max-width:480px){
+  #loginPage{margin:40px auto;padding:32px 20px}
+  #menuPage .cards{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- LOGIN STATE -->
-        <div id="loginState" class="login-state">
-            <div class="login-card">
-                <div class="logo-area">
-                    <div class="logo-icon">📞</div>
-                    <div class="logo-text">
-                        <h1>Contact Directory</h1>
-                        <p>Backoffice System</p>
-                    </div>
-                </div>
 
-                <div class="phone-input-group">
-                    <label for="phoneInput">เบอร์โทรศัพท์</label>
-                    <div class="phone-input-wrapper">
-                        <span class="phone-icon">📱</span>
-                        <input
-                            type="tel"
-                            id="phoneInput"
-                            placeholder="เช่น 081-341-6809"
-                            autocomplete="off"
-                        >
-                    </div>
-                    <div id="errorMessage" class="error-message"></div>
-                </div>
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+  <div class="icon">&#x1F4DE;</div>
+  <h1>Contact Directory</h1>
+  <p>Backoffice System</p>
+  <label>&#x0E40;&#x0E1A;&#x0E2D;&#x0E23;&#x0E4C;&#x0E42;&#x0E17;&#x0E23;&#x0E28;&#x0E31;&#x0E1E;&#x0E17;&#x0E4C;</label>
+  <input type="tel" id="phoneInput" placeholder="&#x0E40;&#x0E0A;&#x0E48;&#x0E19; 094-445-6396" autofocus>
+  <div class="error" id="errorMsg"></div>
+  <button class="btn" onclick="doLogin()">&#x0E40;&#x0E02;&#x0E49;&#x0E32;&#x0E2A;&#x0E39;&#x0E48;&#x0E23;&#x0E30;&#x0E1A;&#x0E1A;</button>
+</div>
 
-                <button id="submitBtn" class="submit-btn" onclick="handleLogin()">
-                    <span class="loading-spinner"></span>
-                    <span>เข้าสู่ระบบ</span>
-                </button>
-            </div>
-        </div>
+<!-- MENU PAGE -->
+<div id="menuPage">
+  <div class="user-info">
+    <h2 id="userName"></h2>
+    <p id="userDetail"></p>
+  </div>
+  <div class="cards" id="dirCards"></div>
+  <button class="logout-btn" onclick="doLogout()">&#x0E2D;&#x0E2D;&#x0E01;&#x0E08;&#x0E32;&#x0E01;&#x0E23;&#x0E30;&#x0E1A;&#x0E1A;</button>
+</div>
 
-        <!-- MENU STATE -->
-        <div id="menuState" class="menu-state">
-            <div class="menu-card">
-                <div class="user-profile">
-                    <div class="user-photo" id="userPhoto">👤</div>
-                    <div class="user-name" id="userName">-</div>
-                    <div class="user-nickname" id="userNickname">-</div>
-                </div>
-
-                <div class="directory-options" id="directoryOptions">
-                    <!-- Dynamically populated -->
-                </div>
-
-                <button class="logout-btn" onclick="handleLogout()">ออกจากระบบ</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // === FIREBASE CONFIG (uncomment when ready) ===
-        // import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-        // import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
-        // const firebaseConfig = {
-        //     apiKey: "",
-        //     authDomain: "",
-        //     projectId: "",
-        //     storageBucket: "",
-        //     messagingSenderId: "",
-        //     appId: ""
-        // };
-        // const app = initializeApp(firebaseConfig);
-        // const db = getFirestore(app);
-
-        // === DIRECTORY GROUPS ===
-        const ABC7_GROUPS = [
-            {"id":"01","name":"Berlin"},
-            {"id":"02","name":"London"},
-            {"id":"03","name":"Moscow"},
-            {"id":"04","name":"New York"},
-            {"id":"05","name":"Paris"},
-            {"id":"06","name":"Rome"},
-            {"id":"07","name":"Seoul"},
-            {"id":"08","name":"Shanghai"},
-            {"id":"09","name":"Sydney"},
-            {"id":"10","name":"Tokyo"}
-        ];
-
-        const NDC57_GROUPS = [
-            {"id":"01","name":"กวาง"},
-            {"id":"02","name":"ไก่ฟ้า"},
-            {"id":"03","name":"ช้าง"},
-            {"id":"04","name":"นกเค้าแมว"},
-            {"id":"05","name":"นกยูง"},
-            {"id":"06","name":"นกหัวขวาน"},
-            {"id":"07","name":"วัว"},
-            {"id":"08","name":"สิงโต"},
-            {"id":"09","name":"เสือ"},
-            {"id":"10","name":"เหยี่ยว"},
-            {"id":"11","name":"คณาจารย์"}
-        ];
-
-        // === PHONE INDEX ===
-        // Built from ABC7_Contact.html and NDC57_Contact.html
-        // === ADMIN ACCESS (เบอร์ภายนอกที่เข้าได้ทุก directory) ===
-        const ADMIN_PHONES = {
+<script>
+const ADMIN_PHONES = {
           "0944456396": {"tname": "Admin", "nickname": "Admin", "photo": ""}
         };
 
-        const PHONE_INDEX = {
+const PHONE_INDEX = {
   "0944456396": [{"dir":"abc7","cid":"admin","group_id":"all","tname":"Admin","nickname":"Admin","photo":""},{"dir":"ndc57","cid":"admin","group_id":"all","tname":"Admin","nickname":"Admin","photo":""}],
   "020227777": [{"dir": "abc7", "cid": "74", "group_id": "03", "tname": "ภาวิตา ลี้สกุล", "nickname": "ต๊อบ", "photo": "74.png"}],
   "0614129999": [{"dir": "ndc57", "cid": "7540", "group_id": "08", "tname": "ธงรบ ด่านอำไพ", "nickname": "ธง", "photo": "7540.png"}],
@@ -952,227 +525,109 @@
   "0995459635": [{"dir": "ndc57", "cid": "7571", "group_id": "04", "tname": "บัณฑิตย์ จันทโรจวงศ์", "nickname": "ปุ๋ม", "photo": "7571.png"}],
 };
 
-        // === SESSION MANAGEMENT ===
-        function saveSession(phone, userData) {
-            const session = {
-                phone: phone,
-                user: userData,
-                timestamp: Date.now()
-            };
-            sessionStorage.setItem('backoffice_user', JSON.stringify(session));
-        }
+const ABC7_GROUPS = [{"id":"01","name":"Berlin"},{"id":"02","name":"London"},{"id":"03","name":"Moscow"},{"id":"04","name":"New York"},{"id":"05","name":"Paris"},{"id":"06","name":"Rome"},{"id":"07","name":"Seoul"},{"id":"08","name":"Shanghai"},{"id":"09","name":"Sydney"},{"id":"10","name":"Tokyo"}];
+const NDC57_GROUPS = [{"id":"01","name":"\u0e01\u0e27\u0e32\u0e07"},{"id":"02","name":"\u0e44\u0e01\u0e48\u0e1f\u0e49\u0e32"},{"id":"03","name":"\u0e0a\u0e49\u0e32\u0e07"},{"id":"04","name":"\u0e19\u0e01\u0e40\u0e04\u0e49\u0e32\u0e41\u0e21\u0e27"},{"id":"05","name":"\u0e19\u0e01\u0e22\u0e39\u0e07"},{"id":"06","name":"\u0e19\u0e01\u0e2b\u0e31\u0e27\u0e02\u0e27\u0e32\u0e19"},{"id":"07","name":"\u0e27\u0e31\u0e27"},{"id":"08","name":"\u0e2a\u0e34\u0e07\u0e42\u0e15"},{"id":"09","name":"\u0e40\u0e2a\u0e37\u0e2d"},{"id":"10","name":"\u0e40\u0e2b\u0e22\u0e35\u0e48\u0e22\u0e27"},{"id":"11","name":"\u0e04\u0e13\u0e32\u0e08\u0e32\u0e23\u0e22\u0e4c"}];
 
-        function getSession() {
-            const data = sessionStorage.getItem('backoffice_user');
-            return data ? JSON.parse(data) : null;
-        }
+// Format phone as user types
+document.getElementById('phoneInput').addEventListener('input', function(e) {
+  let v = e.target.value.replace(/\D/g, '');
+  if (v.length > 10) v = v.slice(0, 10);
+  if (v.length <= 3) e.target.value = v;
+  else if (v.length <= 6) e.target.value = v.slice(0,3)+'-'+v.slice(3);
+  else e.target.value = v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);
+});
 
-        function clearSession() {
-            sessionStorage.removeItem('backoffice_user');
-        }
+// Enter key
+document.getElementById('phoneInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
 
-        // === PHONE NORMALIZATION ===
-        function normalizePhone(phone) {
-            return phone.replace(/\D/g, '');
-        }
+function doLogin() {
+  var phone = document.getElementById('phoneInput').value.replace(/\D/g, '');
+  var err = document.getElementById('errorMsg');
+  err.style.display = 'none';
 
-        // === LOGIN HANDLER ===
-        function handleLogin() {
-            const phoneInput = document.getElementById('phoneInput');
-            const phone = normalizePhone(phoneInput.value);
-            const errorDiv = document.getElementById('errorMessage');
-            const submitBtn = document.getElementById('submitBtn');
+  if (!phone || phone.length < 9) {
+    err.textContent = '\u0e01\u0e23\u0e38\u0e13\u0e32\u0e01\u0e23\u0e2d\u0e01\u0e40\u0e1a\u0e2d\u0e23\u0e4c\u0e42\u0e17\u0e23\u0e28\u0e31\u0e1e\u0e17\u0e4c\u0e43\u0e2b\u0e49\u0e16\u0e39\u0e01\u0e15\u0e49\u0e2d\u0e07';
+    err.style.display = 'block';
+    return;
+  }
 
-            // Clear previous error
-            errorDiv.classList.remove('show');
-            errorDiv.textContent = '';
+  var matches = PHONE_INDEX[phone];
+  if (!matches || matches.length === 0) {
+    err.textContent = '\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e2b\u0e21\u0e32\u0e22\u0e40\u0e25\u0e02\u0e42\u0e17\u0e23\u0e28\u0e31\u0e1e\u0e17\u0e4c\u0e19\u0e35\u0e49\u0e43\u0e19\u0e23\u0e30\u0e1a\u0e1a';
+    err.style.display = 'block';
+    return;
+  }
 
-            // Validation
-            if (!phone || phone.length < 9) {
-                errorDiv.textContent = 'กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง';
-                errorDiv.classList.add('show');
-                phoneInput.focus();
-                return;
-            }
+  // Save session
+  sessionStorage.setItem('backoffice_user', JSON.stringify({phone: phone, user: matches}));
+  showMenu(matches);
+}
 
-            // Show loading state
-            submitBtn.disabled = true;
-            submitBtn.classList.add('loading');
+function showMenu(matches) {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('menuPage').style.display = 'block';
 
-            // Simulate network delay
-            setTimeout(() => {
-                const userData = PHONE_INDEX[phone];
+  var user = matches[0];
+  document.getElementById('userName').textContent = '\u0e2a\u0e27\u0e31\u0e2a\u0e14\u0e35 \u0e04\u0e38\u0e13' + (user.nickname || user.tname);
+  document.getElementById('userDetail').textContent = user.tname;
 
-                if (!userData || userData.length === 0) {
-                    errorDiv.textContent = 'ไม่พบหมายเลขโทรศัพท์นี้ในระบบ';
-                    errorDiv.classList.add('show');
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('loading');
-                    phoneInput.focus();
-                    return;
-                }
+  // Build directory cards
+  var byDir = {};
+  matches.forEach(function(m) {
+    if (!byDir[m.dir]) byDir[m.dir] = [];
+    byDir[m.dir].push(m);
+  });
 
-                // Save session and show menu
-                saveSession(phone, userData);
-                showMenuState(userData);
+  var cardsHtml = '';
+  if (byDir.abc7) {
+    var item = byDir.abc7[0];
+    var gName = item.group_id === 'all' ? 'Admin' : (ABC7_GROUPS.find(function(g){return g.id===item.group_id}) || {}).name || item.group_id;
+    cardsHtml += '<div class="dir-card abc7" onclick="goDir(\'abc7\',\''+item.group_id+'\',\''+item.nickname+'\')"><h3>ABC7 Directory</h3><p>'+(item.group_id==='all'?'Admin - \u0e14\u0e39\u0e44\u0e14\u0e49\u0e17\u0e38\u0e01\u0e01\u0e25\u0e38\u0e48\u0e21':'\u0e01\u0e25\u0e38\u0e48\u0e21: '+gName)+'</p></div>';
+  }
+  if (byDir.ndc57) {
+    var item2 = byDir.ndc57[0];
+    var gName2 = item2.group_id === 'all' ? 'Admin' : (NDC57_GROUPS.find(function(g){return g.id===item2.group_id}) || {}).name || item2.group_id;
+    cardsHtml += '<div class="dir-card ndc57" onclick="goDir(\'ndc57\',\''+item2.group_id+'\',\''+item2.nickname+'\')"><h3>NDC57 Directory</h3><p>'+(item2.group_id==='all'?'Admin - \u0e14\u0e39\u0e44\u0e14\u0e49\u0e17\u0e38\u0e01\u0e01\u0e25\u0e38\u0e48\u0e21':'\u0e01\u0e25\u0e38\u0e48\u0e21: '+gName2)+'</p></div>';
+  }
+  document.getElementById('dirCards').innerHTML = cardsHtml;
+}
 
-                // Reset button
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('loading');
-            }, 600);
-        }
+function goDir(dir, groupId, nickname) {
+  var session = JSON.parse(sessionStorage.getItem('backoffice_user'));
+  session.selectedDir = dir;
+  session.nickname = nickname;
+  session.matches = session.user.filter(function(u){return u.dir===dir});
+  sessionStorage.setItem('backoffice_user', JSON.stringify(session));
+  window.location.href = dir + '.html?group=' + groupId;
+}
 
-        // === SHOW MENU STATE ===
-        function showMenuState(userData) {
-            const loginState = document.getElementById('loginState');
-            const menuState = document.getElementById('menuState');
+function doLogout() {
+  sessionStorage.removeItem('backoffice_user');
+  document.getElementById('menuPage').style.display = 'none';
+  document.getElementById('loginPage').style.display = 'block';
+  document.getElementById('phoneInput').value = '';
+  document.getElementById('phoneInput').focus();
+}
 
-            // Update user info
-            const user = userData[0];
-            document.getElementById('userName').textContent = user.tname;
-            document.getElementById('userNickname').textContent = 'ชื่อเล่น: ' + user.nickname;
-
-            // Load user photo if exists
-            const photoDiv = document.getElementById('userPhoto');
-            if (user.photo) {
-                const img = document.createElement('img');
-                img.src = `../photos/${user.photo}`;
-                img.onerror = () => {
-                    photoDiv.textContent = user.nickname.charAt(0).toUpperCase();
-                };
-                photoDiv.innerHTML = '';
-                photoDiv.appendChild(img);
-            } else {
-                photoDiv.textContent = user.nickname.charAt(0).toUpperCase();
-            }
-
-            // Build directory cards
-            const optionsDiv = document.getElementById('directoryOptions');
-            optionsDiv.innerHTML = '';
-
-            // Group userData by directory
-            const byDir = {};
-            userData.forEach(item => {
-                if (!byDir[item.dir]) byDir[item.dir] = [];
-                byDir[item.dir].push(item);
-            });
-
-            // Add ABC7 card if user exists
-            if (byDir.abc7) {
-                const item = byDir.abc7[0];
-                const isAdmin = item.group_id === 'all';
-                const groupName = isAdmin ? 'ทั้งหมด (Admin)' : (ABC7_GROUPS.find(g => g.id === item.group_id)?.name || item.group_id);
-                const card = document.createElement('div');
-                card.className = 'directory-card abc7';
-                card.innerHTML = `
-                    <div class="directory-name">ABC7 Directory</div>
-                    <div class="directory-group">${isAdmin ? 'Admin - ดูได้ทุกกลุ่ม' : 'กลุ่ม: ' + groupName}</div>
-                `;
-                card.onclick = () => redirectToDirectory('abc7', item.group_id);
-                optionsDiv.appendChild(card);
-            }
-
-            // Add NDC57 card if user exists
-            if (byDir.ndc57) {
-                const item = byDir.ndc57[0];
-                const isAdmin = item.group_id === 'all';
-                const groupName = isAdmin ? 'ทั้งหมด (Admin)' : (NDC57_GROUPS.find(g => g.id === item.group_id)?.name || item.group_id);
-                const card = document.createElement('div');
-                card.className = 'directory-card ndc57';
-                card.innerHTML = `
-                    <div class="directory-name">NDC57 Directory</div>
-                    <div class="directory-group">${isAdmin ? 'Admin - ดูได้ทุกกลุ่ม' : 'กลุ่ม: ' + groupName}</div>
-                `;
-                card.onclick = () => redirectToDirectory('ndc57', item.group_id);
-                optionsDiv.appendChild(card);
-            }
-
-            // Transition to menu
-            loginState.classList.add('hidden');
-            menuState.classList.remove('hidden');
-        }
-
-        // === REDIRECT HANDLER ===
-        function redirectToDirectory(dir, groupId) {
-            // Update session with selected directory info
-            const session = getSession();
-            if (session) {
-                const dirMatch = session.user.find(u => u.dir === dir);
-                session.selectedDir = dir;
-                session.nickname = dirMatch?.nickname || session.user[0]?.nickname || 'User';
-                session.matches = session.user.filter(u => u.dir === dir);
-                sessionStorage.setItem('backoffice_user', JSON.stringify(session));
-            }
-            const redirectUrl = `${dir}.html?group=${groupId}`;
-            window.location.href = redirectUrl;
-        }
-
-        // === LOGOUT HANDLER ===
-        function handleLogout() {
-            clearSession();
-            const loginState = document.getElementById('loginState');
-            const menuState = document.getElementById('menuState');
-            const phoneInput = document.getElementById('phoneInput');
-
-            // Clear input
-            phoneInput.value = '';
-            document.getElementById('errorMessage').classList.remove('show');
-
-            // Transition back to login
-            menuState.classList.add('hidden');
-            loginState.classList.remove('hidden');
-
-            // Focus phone input
-            setTimeout(() => phoneInput.focus(), 300);
-        }
-
-        // === INITIALIZATION ===
-        document.addEventListener('DOMContentLoaded', function() {
-            // Always clear corrupt sessions and show login first
-            const phoneInput = document.getElementById('phoneInput');
-            const loginState = document.getElementById('loginState');
-            const menuState = document.getElementById('menuState');
-
-            try {
-                const session = getSession();
-                if (session && session.user && Array.isArray(session.user) && session.user.length > 0) {
-                    showMenuState(session.user);
-                } else {
-                    clearSession();
-                    loginState.style.display = 'block';
-                    menuState.style.display = 'none';
-                    phoneInput.focus();
-                }
-            } catch(e) {
-                clearSession();
-                loginState.style.display = 'block';
-                menuState.style.display = 'none';
-                phoneInput.focus();
-            }
-
-            // Handle Enter key
-            phoneInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    handleLogin();
-                }
-            });
-
-            // Format phone input as user types
-            phoneInput.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-
-                // Format as Thai phone: XXX-XXX-XXXX
-                if (value.length > 0) {
-                    if (value.length <= 3) {
-                        e.target.value = value;
-                    } else if (value.length <= 6) {
-                        e.target.value = value.slice(0, 3) + '-' + value.slice(3);
-                    } else {
-                        e.target.value = value.slice(0, 3) + '-' + value.slice(3, 6) + '-' + value.slice(6, 10);
-                    }
-                }
-            });
-        });
-    </script>
+// On load - check session
+(function() {
+  try {
+    var s = sessionStorage.getItem('backoffice_user');
+    if (s) {
+      var data = JSON.parse(s);
+      if (data && data.user && data.user.length > 0) {
+        showMenu(data.user);
+        return;
+      }
+    }
+  } catch(e) {}
+  // Default: show login
+  sessionStorage.removeItem('backoffice_user');
+  document.getElementById('loginPage').style.display = 'block';
+  document.getElementById('menuPage').style.display = 'none';
+})();
+</script>
 </body>
 </html>
