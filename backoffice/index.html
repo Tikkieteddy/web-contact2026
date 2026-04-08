@@ -34,15 +34,17 @@
 
         /* === LOGIN STATE === */
         .login-state {
-            animation: fadeIn 0.6s ease-out;
+            display: block;
+            width: 100%;
         }
 
         .login-card {
-            background: white;
+            background: #ffffff;
             border-radius: 16px;
             padding: 48px 32px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             text-align: center;
+            width: 100%;
         }
 
         .logo-area {
@@ -1126,14 +1128,25 @@
 
         // === INITIALIZATION ===
         document.addEventListener('DOMContentLoaded', function() {
-            const session = getSession();
+            // Always clear corrupt sessions and show login first
             const phoneInput = document.getElementById('phoneInput');
+            const loginState = document.getElementById('loginState');
+            const menuState = document.getElementById('menuState');
 
-            if (session) {
-                // User already logged in
-                showMenuState(session.user);
-            } else {
-                // Focus login input
+            try {
+                const session = getSession();
+                if (session && session.user && Array.isArray(session.user) && session.user.length > 0) {
+                    showMenuState(session.user);
+                } else {
+                    clearSession();
+                    loginState.style.display = 'block';
+                    menuState.style.display = 'none';
+                    phoneInput.focus();
+                }
+            } catch(e) {
+                clearSession();
+                loginState.style.display = 'block';
+                menuState.style.display = 'none';
                 phoneInput.focus();
             }
 
