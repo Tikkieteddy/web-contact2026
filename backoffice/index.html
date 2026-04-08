@@ -591,6 +591,14 @@ function showMenu(matches) {
     var gName2 = item2.group_id === 'all' ? 'Admin' : (NDC57_GROUPS.find(function(g){return g.id===item2.group_id}) || {}).name || item2.group_id;
     cardsHtml += '<div class="dir-card ndc57" onclick="goDir(\'ndc57\',\''+item2.group_id+'\',\''+item2.nickname+'\')"><h3>NDC57 Directory</h3><p>'+(item2.group_id==='all'?'Admin - \u0e14\u0e39\u0e44\u0e14\u0e49\u0e17\u0e38\u0e01\u0e01\u0e25\u0e38\u0e48\u0e21':'\u0e01\u0e25\u0e38\u0e48\u0e21: '+gName2)+'</p></div>';
   }
+
+  // Add admin panel link for admin users
+  var sessionPhone = JSON.parse(sessionStorage.getItem('backoffice_user'))?.phone;
+  if (sessionPhone === '0944456396') {
+    cardsHtml += '<div class="dir-card" onclick="window.location.href=\'admin.html\'" style="border:2px solid #c33;grid-column:1/-1"><h3 style="color:#c33">Admin Panel</h3><p>\u0e08\u0e31\u0e14\u0e01\u0e32\u0e23 Login / \u0e41\u0e01\u0e49\u0e44\u0e02\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25 / \u0e40\u0e1e\u0e34\u0e48\u0e21-\u0e25\u0e1a Contact</p></div>';
+    cardsHtml += '<div class="dir-card" onclick="window.location.href=\'import.html\'" style="border:2px solid #f90;grid-column:1/-1"><h3 style="color:#f90">Import Data to Firebase</h3><p>\u0e19\u0e33\u0e40\u0e02\u0e49\u0e32\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e40\u0e14\u0e34\u0e21\u0e02\u0e36\u0e49\u0e19 Firestore (\u0e17\u0e33\u0e04\u0e23\u0e31\u0e49\u0e07\u0e41\u0e23\u0e01)</p></div>';
+  }
+
   document.getElementById('dirCards').innerHTML = cardsHtml;
 }
 
