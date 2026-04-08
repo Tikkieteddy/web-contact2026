@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Directory - Backoffice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            width: 100%;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1b3a5c 0%, #2d5a8c 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* === LOGIN STATE === */
+        .login-state {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            padding: 48px 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .logo-area {
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #1b3a5c, #2d5a8c);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 40px;
+            color: white;
+            box-shadow: 0 8px 24px rgba(27, 58, 92, 0.2);
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            color: #1b3a5c;
+            margin-bottom: 8px;
+        }
+
+        .logo-text p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .phone-input-group {
+            margin: 40px 0;
+        }
+
+        .phone-input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .phone-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .phone-icon {
+            position: absolute;
+            left: 14px;
+            font-size: 18px;
+            color: #9a7b4f;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        #phoneInput {
+            width: 100%;
+            padding: 14px 14px 14px 48px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+        }
+
+        #phoneInput:focus {
+            outline: none;
+            border-color: #9a7b4f;
+            box-shadow: 0 0 0 3px rgba(154, 123, 79, 0.1);
+            background-color: #fafafa;
+        }
+
+        #phoneInput::placeholder {
+            color: #aaa;
+        }
+
+        .error-message {
+            display: none;
+            margin-top: 12px;
+            padding: 12px;
+            background-color: #fee;
+            color: #c33;
+            border-radius: 8px;
+            font-size: 13px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 24px;
+            background: linear-gradient(135deg, #1b3a5c, #2d5a8c);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(27, 58, 92, 0.3);
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(27, 58, 92, 0.4);
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+
+        .submit-btn.loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .submit-btn.loading .loading-spinner {
+            display: block;
+        }
+
+        .submit-btn.loading span {
+            display: none;
+        }
+
+        /* === MENU STATE === */
+        .menu-state {
+            display: none;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-profile {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+
+        .user-photo {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #1b3a5c, #9a7b4f);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 48px;
+            color: white;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1b3a5c;
+            margin-bottom: 4px;
+        }
+
+        .user-nickname {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .directory-options {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .directory-card {
+            padding: 24px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            background: #fafafa;
+        }
+
+        .directory-card.abc7 {
+            border-color: #1b3a5c;
+            background: linear-gradient(135deg, rgba(27, 58, 92, 0.05), rgba(27, 58, 92, 0.02));
+        }
+
+        .directory-card.abc7:hover {
+            border-color: #1b3a5c;
+            box-shadow: 0 8px 24px rgba(27, 58, 92, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .directory-card.ndc57 {
+            border-color: #9a7b4f;
+            background: linear-gradient(135deg, rgba(154, 123, 79, 0.05), rgba(154, 123, 79, 0.02));
+        }
+
+        .directory-card.ndc57:hover {
+            border-color: #9a7b4f;
+            box-shadow: 0 8px 24px rgba(154, 123, 79, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .directory-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .directory-card.abc7 .directory-name {
+            color: #1b3a5c;
+        }
+
+        .directory-card.ndc57 .directory-name {
+            color: #9a7b4f;
+        }
+
+        .directory-group {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 12px;
+            background: #f5f5f5;
+            color: #666;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #eee;
+            color: #333;
+        }
+
+        /* === ANIMATIONS === */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 480px) {
+            .login-card,
+            .menu-card {
+                padding: 32px 24px;
+            }
+
+            .logo-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 32px;
+            }
+
+            .logo-text h1 {
+                font-size: 20px;
+            }
+
+            .user-photo {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+            }
+
+            .user-name {
+                font-size: 18px;
+            }
+
+            .directory-card {
+                padding: 20px;
+            }
+
+            .directory-name {
+                font-size: 18px;
+            }
+        }
+
+        /* Hidden state */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- LOGIN STATE -->
+        <div id="loginState" class="login-state">
+            <div class="login-card">
+                <div class="logo-area">
+                    <div class="logo-icon">📞</div>
+                    <div class="logo-text">
+                        <h1>Contact Directory</h1>
+                        <p>Backoffice System</p>
+                    </div>
+                </div>
+
+                <div class="phone-input-group">
+                    <label for="phoneInput">เบอร์โทรศัพท์</label>
+                    <div class="phone-input-wrapper">
+                        <span class="phone-icon">📱</span>
+                        <input
+                            type="tel"
+                            id="phoneInput"
+                            placeholder="เช่น 081-341-6809"
+                            autocomplete="off"
+                        >
+                    </div>
+                    <div id="errorMessage" class="error-message"></div>
+                </div>
+
+                <button id="submitBtn" class="submit-btn" onclick="handleLogin()">
+                    <span class="loading-spinner"></span>
+                    <span>เข้าสู่ระบบ</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- MENU STATE -->
+        <div id="menuState" class="menu-state">
+            <div class="menu-card">
+                <div class="user-profile">
+                    <div class="user-photo" id="userPhoto">👤</div>
+                    <div class="user-name" id="userName">-</div>
+                    <div class="user-nickname" id="userNickname">-</div>
+                </div>
+
+                <div class="directory-options" id="directoryOptions">
+                    <!-- Dynamically populated -->
+                </div>
+
+                <button class="logout-btn" onclick="handleLogout()">ออกจากระบบ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === FIREBASE CONFIG (uncomment when ready) ===
+        // import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        // import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+        // const firebaseConfig = {
+        //     apiKey: "",
+        //     authDomain: "",
+        //     projectId: "",
+        //     storageBucket: "",
+        //     messagingSenderId: "",
+        //     appId: ""
+        // };
+        // const app = initializeApp(firebaseConfig);
+        // const db = getFirestore(app);
+
+        // === DIRECTORY GROUPS ===
+        const ABC7_GROUPS = [
+            {"id":"01","name":"Berlin"},
+            {"id":"02","name":"London"},
+            {"id":"03","name":"Moscow"},
+            {"id":"04","name":"New York"},
+            {"id":"05","name":"Paris"},
+            {"id":"06","name":"Rome"},
+            {"id":"07","name":"Seoul"},
+            {"id":"08","name":"Shanghai"},
+            {"id":"09","name":"Sydney"},
+            {"id":"10","name":"Tokyo"}
+        ];
+
+        const NDC57_GROUPS = [
+            {"id":"01","name":"กวาง"},
+            {"id":"02","name":"ไก่ฟ้า"},
+            {"id":"03","name":"ช้าง"},
+            {"id":"04","name":"นกเค้าแมว"},
+            {"id":"05","name":"นกยูง"},
+            {"id":"06","name":"นกหัวขวาน"},
+            {"id":"07","name":"วัว"},
+            {"id":"08","name":"สิงโต"},
+            {"id":"09","name":"เสือ"},
+            {"id":"10","name":"เหยี่ยว"},
+            {"id":"11","name":"คณาจารย์"}
+        ];
+
+        // === PHONE INDEX ===
+        // Built from ABC7_Contact.html and NDC57_Contact.html
+        // === ADMIN ACCESS (เบอร์ภายนอกที่เข้าได้ทุก directory) ===
+        const ADMIN_PHONES = {
+          "0944456396": {"tname": "Admin", "nickname": "Admin", "photo": ""}
+        };
+
+        const PHONE_INDEX = {
+  "0944456396": [{"dir":"abc7","cid":"admin","group_id":"all","tname":"Admin","nickname":"Admin","photo":""},{"dir":"ndc57","cid":"admin","group_id":"all","tname":"Admin","nickname":"Admin","photo":""}],
+  "020227777": [{"dir": "abc7", "cid": "74", "group_id": "03", "tname": "ภาวิตา ลี้สกุล", "nickname": "ต๊อบ", "photo": "74.png"}],
+  "0614129999": [{"dir": "ndc57", "cid": "7540", "group_id": "08", "tname": "ธงรบ ด่านอำไพ", "nickname": "ธง", "photo": "7540.png"}],
+  "0614143883": [{"dir": "ndc57", "cid": "7708", "group_id": "01", "tname": "สุทธิ สุโกศล", "nickname": "แป๊ะ", "photo": "7708.png"}],
+  "0614146999": [{"dir": "ndc57", "cid": "7689", "group_id": "09", "tname": "สวัสดิ์ ทัศนา", "nickname": "หวัด", "photo": "7689.png"}],
+  "0614298888": [{"dir": "abc7", "cid": "77", "group_id": "03", "tname": "ยศกร กุลมา", "nickname": "ก่อ", "photo": "77.png"}],
+  "0616323535": [{"dir": "abc7", "cid": "122", "group_id": "05", "tname": "อริยา จิระเลิศพงษ์", "nickname": "แฟ", "photo": "122.png"}],
+  "0619146653": [{"dir": "abc7", "cid": "8", "group_id": "03", "tname": "คม วชิรวราการ", "nickname": "คม", "photo": "8.png"}],
+  "0622343333": [{"dir": "ndc57", "cid": "7725", "group_id": "08", "tname": "สุรศักดิ์ รักษ์สุจิตรัตน์", "nickname": "หนุ่ย", "photo": "7725.png"}],
+  "0622432137": [{"dir": "ndc57", "cid": "7701", "group_id": "08", "tname": "สุชาติ ทับทิมแดง", "nickname": "แหลม", "photo": "7701.png"}],
+  "0623136699": [{"dir": "ndc57", "cid": "7654", "group_id": "09", "tname": "วีรนันทน์ เพ็งจันทร์", "nickname": "วี", "photo": "7654.png"}],
+  "0623646298": [{"dir": "ndc57", "cid": "7510", "group_id": "04", "tname": "ชลิดา พันธ์กระวี", "nickname": "เจี๊ยบ", "photo": "7510.png"}],
+  "0625989565": [{"dir": "abc7", "cid": "10", "group_id": "01", "tname": "จรุงพันฑ์ เชนยะวณิช", "nickname": "Birdie", "photo": "10.png"}],
+  "0627826449": [{"dir": "ndc57", "cid": "7607", "group_id": "01", "tname": "พันธ์นิดา ธูปะเตมีย์", "nickname": "ปุ้ย", "photo": "7607.png"}],
+  "0628289798": [{"dir": "abc7", "cid": "55", "group_id": "03", "tname": "ปุริม สหัสกุล", "nickname": "ไผ่", "photo": "55.png"}],
+  "0628926298": [{"dir": "ndc57", "cid": "7670", "group_id": "04", "tname": "ศิริวัฒน์ ทับทิมเทศ", "nickname": "ต๋อย", "photo": "7670.png"}],
+  "0629419959": [{"dir": "ndc57", "cid": "7617", "group_id": "08", "tname": "ภาคภูมิภิภัทฒ์ สัจจพันธุ์", "nickname": "เป้", "photo": "7617.png"}],
+  "0632396659": [{"dir": "abc7", "cid": "71", "group_id": "02", "tname": "แพรว รอดคำดี", "nickname": "แพรว", "photo": "71.png"}],
+  "063829194": [{"dir": "ndc57", "cid": "7599", "group_id": "04", "tname": "พงศ์รัตน์ ภิรมย์รัตน์", "nickname": "อู๋", "photo": "7599.png"}],
+  "0639466154": [{"dir": "abc7", "cid": "12", "group_id": "01", "tname": "ฉัฐสุรีย์ จารุเจตน์", "nickname": "เบลล์", "photo": "12.png"}],
+  "0639636642": [{"dir": "abc7", "cid": "114", "group_id": "03", "tname": "อธิภู ลี", "nickname": "M", "photo": "114.png"}],
+  "0642653935": [{"dir": "ndc57", "cid": "7735", "group_id": "06", "tname": "องอาจ คุลี", "nickname": "มินทร์", "photo": "7735.png"}],
+  "0647895456": [{"dir": "ndc57", "cid": "7551", "group_id": "05", "tname": "ธัชพล กาญจนกูล", "nickname": "ออด", "photo": "7551.png"}],
+  "0655233838": [{"dir": "ndc57", "cid": "7604", "group_id": "07", "tname": "พรพจน์ เพ็ญพาส", "nickname": "โท", "photo": "7604.png"}],
+  "0657251667": [{"dir": "ndc57", "cid": "7498", "group_id": "05", "tname": "จักรี ศรีชวนะ", "nickname": "เจี๊ยบ", "photo": "7498.png"}],
+  "075343604": [{"dir": "ndc57", "cid": "7712", "group_id": "05", "tname": "สุทัศน์ วาณิชเสนี", "nickname": "แถม", "photo": "7712.png"}],
+  "0802179999": [{"dir": "abc7", "cid": "41", "group_id": "08", "tname": "นัทธวัฒน์ ธีระวาณิชย์", "nickname": "Guide", "photo": "41.png"}],
+  "0803067778": [{"dir": "abc7", "cid": "94", "group_id": "01", "tname": "ศุภธิดา รัตนจามร", "nickname": "กอฟ", "photo": "94.png"}],
+  "0804287865": [{"dir": "ndc57", "cid": "7527", "group_id": "07", "tname": "ณัฐพล ณัฏฐสมบูรณ์", "nickname": "โจ", "photo": "7527.png"}],
+  "0804555555": [{"dir": "ndc57", "cid": "7577", "group_id": "08", "tname": "เบญจวรรณ รังษีธนานนท์", "nickname": "เบญ", "photo": "7577.png"}],
+  "0804564555": [{"dir": "abc7", "cid": "51", "group_id": "02", "tname": "ปรียกร มิมะพันธุ์", "nickname": "ปาล์ม", "photo": "51.png"}],
+  "0805598789": [{"dir": "ndc57", "cid": "7553", "group_id": "10", "tname": "นที เจียรพันธุ์", "nickname": "หนอ", "photo": "7553.png"}],
+  "0805955950": [{"dir": "abc7", "cid": "81", "group_id": "05", "tname": "วรเทพ ศิริรัตน์อัสดร", "nickname": "Golf", "photo": "81.png"}],
+  "0806869998": [{"dir": "abc7", "cid": "20", "group_id": "03", "tname": "ณัฏฐทยาวีร์ ราชสมบูรณ์", "nickname": "ปุ้ย", "photo": "20.png"}],
+  "0809013333": [{"dir": "abc7", "cid": "75", "group_id": "03", "tname": "มาศถวิน ชาญวีรกูล", "nickname": "หวิน", "photo": "75.png"}],
+  "0809092565": [{"dir": "abc7", "cid": "128", "group_id": "04", "tname": "อาชวิณ อัศวโภคิน", "nickname": "เต้ย", "photo": "128.png"}],
+  "0809983091": [{"dir": "ndc57", "cid": "7732", "group_id": "06", "tname": "สุวิทย์ มหาศักดิ์สุนทร", "nickname": "ต๊อด", "photo": "7732.png"}],
+  "0811228888": [{"dir": "abc7", "cid": "112", "group_id": "06", "tname": "องอาจ ประภากมล", "nickname": "เคี้ยง", "photo": "112.png"}],
+  "0811553388": [{"dir": "ndc57", "cid": "7688", "group_id": "08", "tname": "สราวุธ ทรงศิวิไล", "nickname": "วุด", "photo": "7688.png"}],
+  "0811700022": [{"dir": "ndc57", "cid": "7491", "group_id": "05", "tname": "จง ดิลกสมบัติ", "nickname": "จง", "photo": "7491.png"}],
+  "0811710001": [{"dir": "ndc57", "cid": "7621", "group_id": "08", "tname": "ภาวดี ศึกษากิจ", "nickname": "โกโก้", "photo": "7621.png"}],
+  "0811722787": [{"dir": "ndc57", "cid": "7658", "group_id": "09", "tname": "วีระชัย อมรรัตน์", "nickname": "อ้น", "photo": "7658.png"}],
+  "0811731111": [{"dir": "ndc57", "cid": "7549", "group_id": "03", "tname": "ธวัชชัย จึงสงวนพรสุข", "nickname": "ตี๋", "photo": "7549.png"}],
+  "0811744272": [{"dir": "ndc57", "cid": "7690", "group_id": "04", "tname": "สันชัย อินทพิชัย", "nickname": "สัน", "photo": "7690.png"}],
+  "0811745276": [{"dir": "ndc57", "cid": "7716", "group_id": "09", "tname": "สุนัย หาเรือนพืชน์", "nickname": "ป้อม", "photo": "7716.png"}],
+  "0811746063": [{"dir": "ndc57", "cid": "9007", "group_id": "11", "tname": "วินัย เสมสวัสดิ์", "nickname": "นัย", "photo": "9007.png"}],
+  "0812084984": [{"dir": "abc7", "cid": "83", "group_id": "06", "tname": "วริศ บูลกุล", "nickname": "Eddy", "photo": "83.png"}],
+  "0812556677": [{"dir": "ndc57", "cid": "7698", "group_id": "10", "tname": "สุกิจ คงปิยาจารย์", "nickname": "หมู", "photo": "7698.png"}],
+  "0813020330": [{"dir": "ndc57", "cid": "7721", "group_id": "03", "tname": "สุรพล เกษประยูร", "nickname": "ไก่", "photo": "7721.png"}],
+  "0813134444": [{"dir": "ndc57", "cid": "7569", "group_id": "08", "tname": "บัณฑิต พิทักษ์สิทธิ์", "nickname": "ป้อม", "photo": "7569.png"}],
+  "0813265944": [{"dir": "ndc57", "cid": "7494", "group_id": "06", "tname": "จะนะ ปรีชา", "nickname": "จะนะ", "photo": "7494.png"}],
+  "0813416809": [{"dir": "abc7", "cid": "1", "group_id": "01", "tname": "กรมเชษฐ์ วิพันธ์พงษ์", "nickname": "เล็ก", "photo": "1.png"}],
+  "0813449970": [{"dir": "ndc57", "cid": "7634", "group_id": "02", "tname": "รัชฎา สุริยกุล ณ อยุธยา", "nickname": "ลิเก", "photo": "7634.png"}],
+  "0813618888": [{"dir": "ndc57", "cid": "7660", "group_id": "06", "tname": "วุฒิไกร ลีวีระพันธุ์", "nickname": "เต้ย", "photo": "7660.png"}],
+  "0813666060": [{"dir": "ndc57", "cid": "7480", "group_id": "03", "tname": "กีรป กฤตธีรานนท์", "nickname": "ปุ๊", "photo": "7480.png"}],
+  "0813743425": [{"dir": "ndc57", "cid": "7665", "group_id": "06", "tname": "ศักดา เนียมคำ", "nickname": "หนู", "photo": "7665.png"}],
+  "0813761632": [{"dir": "ndc57", "cid": "7502", "group_id": "01", "tname": "จีระ เขียนวิจิตร", "nickname": "ป๊อด", "photo": "7502.png"}],
+  "0813762598": [{"dir": "ndc57", "cid": "7524", "group_id": "09", "tname": "ณัฏฐพัชร สกุลรังสฤษฏ์", "nickname": "เผือก", "photo": "7524.png"}],
+  "0813771954": [{"dir": "ndc57", "cid": "7511", "group_id": "04", "tname": "ชวลิต พงษ์พิทักษ์", "nickname": "ลิต", "photo": "7511.png"}],
+  "0813793039": [{"dir": "ndc57", "cid": "7673", "group_id": "01", "tname": "ศุภกิจ ศิริลักษณ์", "nickname": "ก๊อง", "photo": "7673.png"}],
+  "0813832093": [{"dir": "ndc57", "cid": "7759", "group_id": "03", "tname": "แอร์บูล สุทธิวรรณ", "nickname": "แอร์", "photo": "7759.png"}],
+  "0813893030": [{"dir": "ndc57", "cid": "7643", "group_id": "09", "tname": "วิฑูรย์ ศิริปักมานนท์", "nickname": "ทูน", "photo": "7643.png"}],
+  "0814023251": [{"dir": "ndc57", "cid": "7532", "group_id": "08", "tname": "ตุลา เกตุษเฐียร", "nickname": "เปิ้น", "photo": "7532.png"}],
+  "0814081910": [{"dir": "ndc57", "cid": "7636", "group_id": "04", "tname": "รัตนะ สวามีชัย", "nickname": "น้อย", "photo": "7636.png"}],
+  "0814276869": [{"dir": "ndc57", "cid": "9002", "group_id": "11", "tname": "ยุทธนาสินธุ์ ศรีนุรัตน์เดชา", "nickname": "ตุ๋ย", "photo": "9002.png"}],
+  "0814321199": [{"dir": "abc7", "cid": "124", "group_id": "05", "tname": "อริสา กุลปิยะวาจา", "nickname": "Peach", "photo": "124.png"}],
+  "0814382000": [{"dir": "ndc57", "cid": "7669", "group_id": "09", "tname": "ศิริวรรณ พานิชตระกูล", "nickname": "จิ๋ว", "photo": "7669.png"}],
+  "0814382345": [{"dir": "ndc57", "cid": "7580", "group_id": "02", "tname": "ประกาศิต เทศวิศาล", "nickname": "โหน่ง", "photo": "7580.png"}],
+  "0814409482": [{"dir": "ndc57", "cid": "7492", "group_id": "02", "tname": "จตุพร แสงหิรัญ", "nickname": "จ๋อง", "photo": "7492.png"}],
+  "0814443160": [{"dir": "ndc57", "cid": "7515", "group_id": "07", "tname": "ชัยวัฒน์ พิชัยณรงค์", "nickname": "ปิ๊กมี่", "photo": "7515.png"}],
+  "0814533111": [{"dir": "ndc57", "cid": "7754", "group_id": "01", "tname": "อุดม สุขสุดประเสริฐ", "nickname": "ดม", "photo": "7754.png"}],
+  "0814800438": [{"dir": "ndc57", "cid": "7627", "group_id": "04", "tname": "มโนช ตันตระเธียร", "nickname": "โนช", "photo": "7627.png"}],
+  "0814909090": [{"dir": "ndc57", "cid": "7713", "group_id": "09", "tname": "สุธีร์ เนรกัณฐี", "nickname": "อ๊อด", "photo": "7713.png"}],
+  "0815264816": [{"dir": "ndc57", "cid": "9013", "group_id": "11", "tname": "ชลิต ชุณหรัชพันธุ์", "nickname": "ฤทธิ์", "photo": "9013.png"}],
+  "0815455555": [{"dir": "ndc57", "cid": "7495", "group_id": "03", "tname": "จักรกฤษณ์ ศิริพานิชย์", "nickname": "โก๋", "photo": "7495.png"}],
+  "0815476268": [{"dir": "abc7", "cid": "110", "group_id": "06", "tname": "สุริยันต์ โคจรโรจน์", "nickname": "ไอซ์", "photo": "110.png"}],
+  "0815511993": [{"dir": "ndc57", "cid": "7706", "group_id": "10", "tname": "สุดาวรรณ สมใจ", "nickname": "แอน", "photo": "7706.png"}],
+  "0815556551": [{"dir": "abc7", "cid": "14", "group_id": "06", "tname": "ชมศจี เตชะรัตนประเสริฐ", "nickname": "อุ๋ย", "photo": "14.png"}],
+  "0815565444": [{"dir": "abc7", "cid": "92", "group_id": "06", "tname": "ศิลินลักษ์ ตุลยานันต์", "nickname": "Fern", "photo": "92.png"}],
+  "0815569194": [{"dir": "ndc57", "cid": "7578", "group_id": "02", "tname": "ปณต แสงเทียน", "nickname": "ตุ๋ย", "photo": "7578.png"}],
+  "0815609977": [{"dir": "ndc57", "cid": "7661", "group_id": "05", "tname": "วุฒิพงษ์ ชั้นประดับ", "nickname": "วู้ดดี้", "photo": "7661.png"}],
+  "0815654246": [{"dir": "abc7", "cid": "123", "group_id": "06", "tname": "อริยา ตั้งมิตรประชา", "nickname": "ฮั้ว", "photo": "123.png"}],
+  "0815735555": [{"dir": "abc7", "cid": "64", "group_id": "03", "tname": "พิมพ์ณดา ปรียศิรวัฒน์", "nickname": "ผึ้ง", "photo": "64.png"}],
+  "0816118998": [{"dir": "ndc57", "cid": "7730", "group_id": "10", "tname": "สุวิทย์ จิรชนานนท์", "nickname": "วิทย์", "photo": "7730.png"}],
+  "0816123393": [{"dir": "ndc57", "cid": "7543", "group_id": "06", "tname": "ธนา ธุระเจน", "nickname": "ต้อง", "photo": "7543.png"}],
+  "0816126044": [{"dir": "abc7", "cid": "39", "group_id": "10", "tname": "นฤดม รุ่งศิริวงศ์", "nickname": "เอก", "photo": "39.png"}],
+  "0816159339": [{"dir": "ndc57", "cid": "7575", "group_id": "05", "tname": "บุรณัชย์ สมุทรักษ์", "nickname": "ท๊อป", "photo": "7575.png"}],
+  "0816166815": [{"dir": "ndc57", "cid": "7744", "group_id": "06", "tname": "อภิชัย ศรีโสภิต", "nickname": "แก้ว", "photo": "7744.png"}],
+  "0816202002": [{"dir": "ndc57", "cid": "7624", "group_id": "02", "tname": "มานพชัย วงศ์ภักดี", "nickname": "ตุ่ย", "photo": "7624.png"}],
+  "0816207199": [{"dir": "abc7", "cid": "4", "group_id": "02", "tname": "กาญจนา ศิริอนันต์", "nickname": "เอ๋", "photo": "4.png"}],
+  "0816266666": [{"dir": "ndc57", "cid": "7563", "group_id": "07", "tname": "นาฬิกอติภัค แสงสนิท", "nickname": "บิ๊ก", "photo": "7563.png"}],
+  "0816277779": [{"dir": "ndc57", "cid": "9014", "group_id": "11", "tname": "นรชัย วงษ์ดนตรี", "nickname": "นร", "photo": "9014.png"}],
+  "0816309665": [{"dir": "ndc57", "cid": "7632", "group_id": "06", "tname": "รจเรขา เบญจกุล", "nickname": "ฮันนี่", "photo": "7632.png"}],
+  "0816340067": [{"dir": "ndc57", "cid": "7594", "group_id": "01", "tname": "ปิยพรรณ หันนาคินทร์", "nickname": "ไก่", "photo": "7594.png"}],
+  "0816379199": [{"dir": "ndc57", "cid": "7681", "group_id": "01", "tname": "สมยศ อักษร", "nickname": "เสริฐ", "photo": "7681.png"}],
+  "0816399216": [{"dir": "abc7", "cid": "28", "group_id": "02", "tname": "ไทคูน ควินซี ยู", "nickname": " ควิ้น", "photo": "28.png"}],
+  "0816402900": [{"dir": "ndc57", "cid": "7499", "group_id": "01", "tname": "จันทวรรณ สุจริตกุล", "nickname": "ผึ้ง", "photo": "7499.png"}],
+  "0816408221": [{"dir": "ndc57", "cid": "7727", "group_id": "10", "tname": "สุรุ่งลักษณ์ เมฆะอำนวยชัย", "nickname": "จิ๋ว", "photo": "7727.png"}],
+  "0816408459": [{"dir": "abc7", "cid": "133", "group_id": "10", "tname": "ตราวุทธิ์ เหลืองสมบูรณ์", "nickname": "เผ่า", "photo": "133.png"}],
+  "0816415234": [{"dir": "ndc57", "cid": "7743", "group_id": "08", "tname": "อภัย สุทธิสังข์", "nickname": "จอน", "photo": "7743.png"}],
+  "0816415411": [{"dir": "abc7", "cid": "53", "group_id": "05", "tname": "ปาจรีย์ ฐิรวัฒนวงศ์", "nickname": "แพท", "photo": "53.png"}],
+  "0816464530": [{"dir": "ndc57", "cid": "7561", "group_id": "04", "tname": "นันทริกา ชันซื่อ", "nickname": "หนิ่ง", "photo": "7561.png"}],
+  "0816477066": [{"dir": "ndc57", "cid": "7545", "group_id": "04", "tname": "ธรรมนูญ เชี่ยวการปราบ", "nickname": "นูญ", "photo": "7545.png"}],
+  "0816488486": [{"dir": "ndc57", "cid": "7566", "group_id": "10", "tname": "นิวัตวาร พัฒน์ชนะ", "nickname": "แจ๋ว", "photo": "7566.png"}],
+  "0816492500": [{"dir": "ndc57", "cid": "9022", "group_id": "11", "tname": "สุรศักดิ์ ใจอู่", "nickname": "อู่", "photo": "9022.png"}],
+  "0816576281": [{"dir": "abc7", "cid": "36", "group_id": "04", "tname": "ธิดารัตน์ มั่นสินธร", "nickname": "ใหม่", "photo": "36.png"}],
+  "0816581043": [{"dir": "ndc57", "cid": "7756", "group_id": "03", "tname": "เอกพงศ์ วงศ์พรหมเมฆ", "nickname": "หมี", "photo": "7756.png"}],
+  "0816583333": [{"dir": "abc7", "cid": "5", "group_id": "09", "tname": "กิติศักดิ์ จำปาทิพย์พงศ์", "nickname": "โทนี่", "photo": "5.png"}],
+  "0816820783": [{"dir": "ndc57", "cid": "7615", "group_id": "05", "tname": "ไพโรจน์ สรรพกิจ", "nickname": "ตึ๋ง", "photo": "7615.png"}],
+  "0816822222": [{"dir": "ndc57", "cid": "7709", "group_id": "04", "tname": "สุทธิชาติ อัศวศิรโยธิน", "nickname": "ตุ๊", "photo": "7709.png"}],
+  "0816965700": [{"dir": "ndc57", "cid": "7642", "group_id": "07", "tname": "วิเชียร ตันตะวิริยะ", "nickname": "เชียร", "photo": "7642.png"}],
+  "0817001111": [{"dir": "abc7", "cid": "116", "group_id": "08", "tname": "อนุดิษฐ์ นาครทรรพ", "nickname": "POP ", "photo": "116.png"}],
+  "0817008508": [{"dir": "abc7", "cid": "15", "group_id": "04", "tname": "ชัคพัฒน์ นัสการ", "nickname": "ชัค", "photo": "15.png"}],
+  "0817277326": [{"dir": "ndc57", "cid": "7630", "group_id": "06", "tname": "ยอดชาย วีระพงศ์", "nickname": "โต๊ด", "photo": "7630.png"}],
+  "0817319435": [{"dir": "ndc57", "cid": "7759", "group_id": "03", "tname": "แอร์บูล สุทธิวรรณ", "nickname": "แอร์", "photo": "7759.png"}],
+  "0817320901": [{"dir": "ndc57", "cid": "7541", "group_id": "10", "tname": "ธนวรรธน์ พลวิชัย", "nickname": "กอล์ฟ", "photo": "7541.png"}],
+  "0817328885": [{"dir": "abc7", "cid": "46", "group_id": "05", "tname": "บุญลือ ประเสริฐโสภา", "nickname": "ลือ", "photo": "46.png"}],
+  "0817334088": [{"dir": "abc7", "cid": "104", "group_id": "03", "tname": "สิตมน ผลดี", "nickname": "PEACH", "photo": "104.png"}],
+  "0817337200": [{"dir": "ndc57", "cid": "7513", "group_id": "05", "tname": "ชวลิต แสวงพืชน์", "nickname": "แดง", "photo": "7513.png"}],
+  "0817340682": [{"dir": "ndc57", "cid": "7739", "group_id": "01", "tname": "อนันต์ แก้วกำเนิด", "nickname": "นัน", "photo": "7739.png"}],
+  "0817359023": [{"dir": "ndc57", "cid": "9001", "group_id": "11", "tname": "สุรสิทธิ์ ถนัดทาง", "nickname": "ตึ๋ง", "photo": "9001.png"}],
+  "0817397979": [{"dir": "ndc57", "cid": "7495", "group_id": "03", "tname": "จักรกฤษณ์ ศิริพานิชย์", "nickname": "โก๋", "photo": "7495.png"}],
+  "0817506689": [{"dir": "ndc57", "cid": "7528", "group_id": "02", "tname": "ดนัย เถาว์หิรัญ", "nickname": "ป้อม", "photo": "7528.png"}],
+  "0817519545": [{"dir": "abc7", "cid": "24", "group_id": "03", "tname": "ณัฐวุฒิ พิศลพูล", "nickname": "บี", "photo": "24.png"}],
+  "0817534007": [{"dir": "ndc57", "cid": "7707", "group_id": "02", "tname": "สุทธจิต ลีนานนท์", "nickname": "ปิ๊กมี่", "photo": "7707.png"}],
+  "0817536311": [{"dir": "abc7", "cid": "85", "group_id": "03", "tname": "วิทวัส พันธ์พานิช", "nickname": "Ben", "photo": "85.png"}],
+  "0817538127": [{"dir": "ndc57", "cid": "7583", "group_id": "06", "tname": "ประจักษ์ บุญยัง", "nickname": "น้อย", "photo": "7583.png"}],
+  "0817549988": [{"dir": "ndc57", "cid": "7484", "group_id": "10", "tname": "เกรียงไกร โสธรชัย", "nickname": "เกรียง", "photo": "7484.png"}],
+  "0817555884": [{"dir": "ndc57", "cid": "7662", "group_id": "02", "tname": "ศตวรรษ หิรัญบูรณะ", "nickname": "ติ๊ก", "photo": "7662.png"}],
+  "0817808902": [{"dir": "ndc57", "cid": "7538", "group_id": "03", "tname": "ทำนุ โพธิ์งาม", "nickname": "นุ", "photo": "7538.png"}],
+  "0817823007": [{"dir": "ndc57", "cid": "9004", "group_id": "11", "tname": "พหล แก้วพรรณา", "nickname": "หนู", "photo": "9004.png"}],
+  "0818027775": [{"dir": "ndc57", "cid": "7686", "group_id": "10", "tname": "สรโกเศศ เปี่ยมญาติ", "nickname": "เปีย", "photo": "7686.png"}],
+  "0818031005": [{"dir": "ndc57", "cid": "7680", "group_id": "10", "tname": "สมบูรณ์ ดีรอด", "nickname": "เหลี่ยม", "photo": "7680.png"}],
+  "0818038016": [{"dir": "ndc57", "cid": "7723", "group_id": "04", "tname": "สุรศักดิ์ ถนัดศีลธรรม", "nickname": "โม", "photo": "7723.png"}],
+  "0818044347": [{"dir": "abc7", "cid": "47", "group_id": "01", "tname": "เบญจวรรณ พิมขาว", "nickname": "เบ็น", "photo": "47.png"}],
+  "0818045577": [{"dir": "ndc57", "cid": "7659", "group_id": "01", "tname": "วีระศักดิ์ วิจิตร์แสงศรี", "nickname": "ปู", "photo": "7659.png"}],
+  "0818050322": [{"dir": "abc7", "cid": "6", "group_id": "10", "tname": "กีรติ ปัญญาวุฒิไกร", "nickname": "Want", "photo": "6.png"}],
+  "0818060800": [{"dir": "ndc57", "cid": "7731", "group_id": "02", "tname": "สุวิทย์ ธรณินทร์พานิช", "nickname": "วิทย์", "photo": "7731.png"}],
+  "0818069671": [{"dir": "ndc57", "cid": "7638", "group_id": "08", "tname": "รุ่งโรจน์ รังสิโยภาส", "nickname": "เก๋", "photo": "7638.png"}],
+  "0818088080": [{"dir": "ndc57", "cid": "7477", "group_id": "08", "tname": "กลินท์ สารสิน", "nickname": "เปา", "photo": "7477.png"}],
+  "0818089180": [{"dir": "ndc57", "cid": "7557", "group_id": "07", "tname": "นเรศ ดำรงชัย", "nickname": null, "photo": "7557.png"}],
+  "0818103540": [{"dir": "abc7", "cid": "19", "group_id": "04", "tname": "ฑัตชัย ปฏิโภคสุทธิ์", "nickname": "เวย์", "photo": "19.png"}],
+  "0818116688": [{"dir": "abc7", "cid": "18", "group_id": "02", "tname": "ชาตยา สุพรรณพงศ์", "nickname": "เป้", "photo": "18.png"}],
+  "0818126006": [{"dir": "ndc57", "cid": "7500", "group_id": "01", "tname": "จารุวัฒน์ ไวศยะ", "nickname": "โต้ง", "photo": "7500.png"}],
+  "0818130123": [{"dir": "ndc57", "cid": "7656", "group_id": "02", "tname": "วีรวุฒิ อิ่มสำราญ", "nickname": "วี", "photo": "7656.png"}],
+  "0818132115": [{"dir": "ndc57", "cid": "7719", "group_id": "09", "tname": "สุมิตร แดงดีเลิศ", "nickname": "อุ๋ย", "photo": "7719.png"}],
+  "0818145711": [{"dir": "ndc57", "cid": "7564", "group_id": "01", "tname": "นำชัย เอกพัฒนพานิชย์", "nickname": "อ๊อด", "photo": "7564.png"}],
+  "0818156633": [{"dir": "ndc57", "cid": "7554", "group_id": "01", "tname": "นพดล มังกรชัย", "nickname": "กุ้ง", "photo": "7554.png"}],
+  "0818157711": [{"dir": "ndc57", "cid": "7522", "group_id": "02", "tname": "ณฐพนธ์ ศรีสวัสดิ์", "nickname": "จ๊าบ", "photo": "7522.png"}],
+  "0818163821": [{"dir": "ndc57", "cid": "7717", "group_id": "02", "tname": "สุพจน์ ธำมรงค์รัตน์", "nickname": "หมู", "photo": "7717.png"}],
+  "0818164280": [{"dir": "ndc57", "cid": "7605", "group_id": "04", "tname": "พรสุข จงประสิทธิ์", "nickname": "นิด", "photo": "7605.png"}],
+  "0818169456": [{"dir": "ndc57", "cid": "7602", "group_id": "07", "tname": "พรทิพย์ เทพตระการพร", "nickname": "ฟิ้ง", "photo": "7602.png"}],
+  "0818184003": [{"dir": "abc7", "cid": "23", "group_id": "09", "tname": "ณัฐพล วิมลเฉลา", "nickname": "กอล์ฟ", "photo": "23.png"}],
+  "0818189875": [{"dir": "ndc57", "cid": "7718", "group_id": "06", "tname": "สุภัทร จำปาทอง", "nickname": "พัด", "photo": "7718.png"}],
+  "0818224019": [{"dir": "ndc57", "cid": "7616", "group_id": "07", "tname": "ภัทราวรรณ เวชชศาสตร์", "nickname": "ปิ๋ม", "photo": "7616.png"}],
+  "0818234966": [{"dir": "ndc57", "cid": "7497", "group_id": "02", "tname": "จักรินทร์ ขจรบุญ", "nickname": "แจ๊ค", "photo": "7497.png"}],
+  "0818248024": [{"dir": "abc7", "cid": "63", "group_id": "08", "tname": "พัฒนา นิธิพัฒนปัญญา", "nickname": "พัฒ", "photo": "63.png"}],
+  "0818251069": [{"dir": "ndc57", "cid": "7720", "group_id": "10", "tname": "สุรใจ จิตต์แจ้ง", "nickname": "มิก", "photo": "7720.png"}],
+  "0818251343": [{"dir": "ndc57", "cid": "7604", "group_id": "07", "tname": "พรพจน์ เพ็ญพาส", "nickname": "โท", "photo": "7604.png"}],
+  "0818261694": [{"dir": "ndc57", "cid": "7705", "group_id": "10", "tname": "สุชาติ สุทธิพล", "nickname": "ไก่", "photo": "7705.png"}],
+  "0818265015": [{"dir": "ndc57", "cid": "7496", "group_id": "08", "tname": "จักรชัย โมกขะสมิต", "nickname": "เอก", "photo": "7496.png"}],
+  "0818282969": [{"dir": "ndc57", "cid": "7486", "group_id": "08", "tname": "เกษม ภิญโญชนม์", "nickname": "เกี๋ยม", "photo": "7486.png"}],
+  "0818283035": [{"dir": "ndc57", "cid": "7581", "group_id": "10", "tname": "ประกิด บุณยัษฐิติ", "nickname": "ป๊อก", "photo": "7581.png"}],
+  "0818291020": [{"dir": "ndc57", "cid": "7668", "group_id": "10", "tname": "ศิริพงษ์ วงศ์ขันตี", "nickname": "อ๊อต", "photo": "7668.png"}],
+  "0818291713": [{"dir": "ndc57", "cid": "7529", "group_id": "03", "tname": "ดวงตา ตันโช", "nickname": "ต้อย", "photo": "7529.png"}],
+  "0818298333": [{"dir": "ndc57", "cid": "7584", "group_id": "01", "tname": "ประภาวดี ธานีรนานนท์", "nickname": "เจี๊ยบ", "photo": "7584.png"}],
+  "0818309139": [{"dir": "abc7", "cid": "106", "group_id": "09", "tname": "สิริรัตน์ อัครนิรันดร์กุล", "nickname": "ม้อย", "photo": "106.png"}],
+  "0818313583": [{"dir": "ndc57", "cid": "7696", "group_id": "04", "tname": "สิทธิพล ชินสำราญ", "nickname": "เจี๊ยบ", "photo": "7696.png"}],
+  "0818315975": [{"dir": "ndc57", "cid": "7519", "group_id": "07", "tname": "ชุติมา หาญเผชิญ", "nickname": "นก", "photo": "7519.png"}],
+  "0818316057": [{"dir": "ndc57", "cid": "7514", "group_id": "07", "tname": "ชัชวาล เอี่ยมศิริ", "nickname": "ชัช", "photo": "7514.png"}],
+  "0818329574": [{"dir": "ndc57", "cid": "7715", "group_id": "06", "tname": "สุนัย ประภูชะเนย์", "nickname": "นัย", "photo": "7715.png"}],
+  "0818334647": [{"dir": "ndc57", "cid": "7550", "group_id": "01", "tname": "ธัชพงศ์ วิสุทธิสังวร", "nickname": "อ้วน", "photo": "7550.png"}],
+  "0818360513": [{"dir": "ndc57", "cid": "7516", "group_id": "05", "tname": "ชาญศิลป์ ตรีนุชกร", "nickname": "มรรค", "photo": "7516.png"}],
+  "0818371825": [{"dir": "ndc57", "cid": "7598", "group_id": "09", "tname": "พงศ์บุณย์ ปองทอง", "nickname": "จุ๋ม", "photo": "7598.png"}],
+  "0818375278": [{"dir": "ndc57", "cid": "7614", "group_id": "07", "tname": "ไพบูลย์ ภานุวัฒนวงศ์", "nickname": "นุ", "photo": "7614.png"}],
+  "0818379339": [{"dir": "ndc57", "cid": "7547", "group_id": "08", "tname": "ธรินทร์ ปุณศรี", "nickname": "จ้อ", "photo": "7547.png"}],
+  "0818387900": [{"dir": "ndc57", "cid": "7501", "group_id": "06", "tname": "จินดา สระสมบูรณ์", "nickname": "กลิ้ง", "photo": "7501.png"}],
+  "0818391927": [{"dir": "ndc57", "cid": "7733", "group_id": "02", "tname": "เสาวณีย์ เจษฎาวรางกูล", "nickname": "ลั้ง", "photo": "7733.png"}],
+  "0818401010": [{"dir": "ndc57", "cid": "7518", "group_id": "10", "tname": "ชินภัทร สารสิน", "nickname": "ป๋อ", "photo": "7518.png"}],
+  "0818401144": [{"dir": "abc7", "cid": "40", "group_id": "10", "tname": "นลิน รุจิรวงศ์", "nickname": "นะ", "photo": "40.png"}],
+  "0818404099": [{"dir": "ndc57", "cid": "7504", "group_id": "05", "tname": "จุฬา สุขมานพ", "nickname": "จุ๊", "photo": "7504.png"}],
+  "0818406599": [{"dir": "ndc57", "cid": "7628", "group_id": "02", "tname": "มาลี วงศาโรจน์", "nickname": "พี่มา", "photo": "7628.png"}],
+  "0818408787": [{"dir": "ndc57", "cid": "7565", "group_id": "05", "tname": "นิวัตน์ ลิ้มสุขนิรันดร์", "nickname": "วัด", "photo": "7565.png"}],
+  "0818429981": [{"dir": "ndc57", "cid": "7666", "group_id": "03", "tname": "ศักดา ศิริรัตน์", "nickname": "ป้อม", "photo": "7666.png"}],
+  "0818441188": [{"dir": "ndc57", "cid": "7671", "group_id": "06", "tname": "ศิลปชัย ไพโรจน์กิจจา", "nickname": "ชัย", "photo": "7671.png"}],
+  "0818445111": [{"dir": "ndc57", "cid": "7732", "group_id": "06", "tname": "สุวิทย์ มหาศักดิ์สุนทร", "nickname": "ต๊อด", "photo": "7732.png"}],
+  "0818453902": [{"dir": "ndc57", "cid": "7663", "group_id": "06", "tname": "ศยาม จันทรวิโรจน์", "nickname": "บู้", "photo": "7663.png"}],
+  "0818490289": [{"dir": "ndc57", "cid": "7610", "group_id": "09", "tname": "พิมพร โอวาสิทธิ์", "nickname": "พิม", "photo": "7610.png"}],
+  "0818496663": [{"dir": "ndc57", "cid": "9011", "group_id": "11", "tname": "ศิริภร หิตะศิริ", "nickname": "ตุ้ย", "photo": "9011.png"}],
+  "0818540234": [{"dir": "ndc57", "cid": "7609", "group_id": "03", "tname": "พิทยา จารุพูนผล", "nickname": "หมั่น", "photo": "7609.png"}],
+  "0818549111": [{"dir": "abc7", "cid": "38", "group_id": "10", "tname": "นพรัตน์ พานทองวิริยะกุล", "nickname": "นพ", "photo": "38.png"}],
+  "0818554391": [{"dir": "ndc57", "cid": "7667", "group_id": "10", "tname": "ศัจธร วัฒนะมงคล", "nickname": "กก", "photo": "7667.png"}],
+  "0818663851": [{"dir": "ndc57", "cid": "7753", "group_id": "09", "tname": "อำนาจ วิชยานุวัติ", "nickname": "ตู่", "photo": "7753.png"}],
+  "0818696888": [{"dir": "ndc57", "cid": "7729", "group_id": "01", "tname": "สุวิชา แก้วรุ่งเรือง", "nickname": "อู๊ด", "photo": "7729.png"}],
+  "0818715557": [{"dir": "abc7", "cid": "7", "group_id": "08", "tname": "กุลปิยา ฑีฆธนานนท์", "nickname": "เกด", "photo": "7.png"}],
+  "0818743416": [{"dir": "ndc57", "cid": "7714", "group_id": "04", "tname": "สุธีระ เย็นทรวง", "nickname": "เย็น", "photo": "7714.png"}],
+  "0818750779": [{"dir": "ndc57", "cid": "7694", "group_id": "07", "tname": "สาโรจน์ สุวัตถิกุล", "nickname": "โรจน์", "photo": "7694.png"}],
+  "0818755337": [{"dir": "abc7", "cid": "86", "group_id": "04", "tname": "วิภาดา ชัยเศวตกานนท์", "nickname": "GiG", "photo": "86.png"}],
+  "0818756732": [{"dir": "ndc57", "cid": "7507", "group_id": "05", "tname": "ชนินทร์ โตเลี้ยง", "nickname": "นิน", "photo": "7507.png"}],
+  "0818765962": [{"dir": "ndc57", "cid": "7534", "group_id": "09", "tname": "ทนงศักดิ์ กิตติศัพท์", "nickname": "ตุ้ม", "photo": "7534.png"}],
+  "0818797751": [{"dir": "ndc57", "cid": "7749", "group_id": "07", "tname": "อลงกรณ์ เจริญพันธ์", "nickname": "เปี๊ยก", "photo": "7749.png"}],
+  "0818811635": [{"dir": "ndc57", "cid": "7752", "group_id": "01", "tname": "อำนาจ เดชะ", "nickname": "แดง", "photo": "7752.png"}],
+  "0818814853": [{"dir": "ndc57", "cid": "7576", "group_id": "09", "tname": "เบญจพร ชาครานนท์", "nickname": "อ่าง", "photo": "7576.png"}],
+  "0818861835": [{"dir": "ndc57", "cid": "7556", "group_id": "05", "tname": "นพดล สุขทับศรี", "nickname": "ต๋อย", "photo": "7556.png"}],
+  "0818892511": [{"dir": "ndc57", "cid": "7639", "group_id": "10", "tname": "ลลิต ถนอมสิงห์", "nickname": "ลิต", "photo": "7639.png"}],
+  "0818897655": [{"dir": "abc7", "cid": "54", "group_id": "05", "tname": "ปาริชาติ กิตติธีรพรชัย", "nickname": "นูร์", "photo": "54.png"}],
+  "0818905611": [{"dir": "ndc57", "cid": "7738", "group_id": "07", "tname": "อติลักษณ์ อรรถาพิช", "nickname": "หนุ่ย", "photo": "7738.png"}],
+  "0818909595": [{"dir": "abc7", "cid": "50", "group_id": "02", "tname": "ปรางวดี อิทธิโรจนกุล", "nickname": "กิ๊บ", "photo": "50.png"}],
+  "0818929511": [{"dir": "abc7", "cid": "115", "group_id": "06", "tname": "อนันต์ ตรีสิริเกษม", "nickname": "เทียม", "photo": "115.png"}],
+  "0818956831": [{"dir": "ndc57", "cid": "7712", "group_id": "05", "tname": "สุทัศน์ วาณิชเสนี", "nickname": "แถม", "photo": "7712.png"}],
+  "0818991212": [{"dir": "abc7", "cid": "108", "group_id": "04", "tname": "สุดารัตน์ เกยุราพันธ์", "nickname": "หน่อย", "photo": "108.png"}],
+  "0819060505": [{"dir": "abc7", "cid": "61", "group_id": "05", "tname": "พรรโษทก วงษ์สุวรรณ", "nickname": "โอ๊บ", "photo": "61.png"}],
+  "0819071984": [{"dir": "ndc57", "cid": "7734", "group_id": "04", "tname": "เสาวภาคย์ กระจ่างยุทธ", "nickname": "ตู่", "photo": "7734.png"}],
+  "0819072222": [{"dir": "ndc57", "cid": "7695", "group_id": "03", "tname": "สิงห์ทอง หมีทอง", "nickname": "หมี", "photo": "7695.png"}],
+  "0819077155": [{"dir": "ndc57", "cid": "7746", "group_id": "06", "tname": "อภิญาณ์ หทัยธรรม", "nickname": "ปุ้ย", "photo": "7746.png"}],
+  "0819090544": [{"dir": "ndc57", "cid": "7650", "group_id": "06", "tname": "วิโรจน์ นรารักษ์", "nickname": "โรจน์", "photo": "7650.png"}],
+  "0819104141": [{"dir": "abc7", "cid": "103", "group_id": "08", "tname": "สาวิตรี ตาปสนันทน์", "nickname": "ผึ้ง", "photo": "103.png"}],
+  "0819105517": [{"dir": "ndc57", "cid": "7625", "group_id": "07", "tname": "มานัต วงษ์วาทย์", "nickname": "นัด", "photo": "7625.png"}],
+  "0819113423": [{"dir": "ndc57", "cid": "7704", "group_id": "08", "tname": "สุชาติ วงศ์อนันต์ชัย", "nickname": "ตู่", "photo": "7704.png"}],
+  "0819121586": [{"dir": "ndc57", "cid": "9016", "group_id": "11", "tname": "กฤษฎา สุทธานินทร์", "nickname": "เบิ้ม", "photo": "9016.png"}],
+  "0819125050": [{"dir": "ndc57", "cid": "7572", "group_id": "06", "tname": "บุญกิต จิตรงามปลั่ง", "nickname": "กิต", "photo": "7572.png"}],
+  "0819127915": [{"dir": "ndc57", "cid": "7672", "group_id": "06", "tname": "ศิลักษณ์ ปั้นน่วม", "nickname": "ติ่ง", "photo": "7672.png"}],
+  "0819130162": [{"dir": "ndc57", "cid": "7474", "group_id": "06", "tname": "กนิษฐ์ ชาญปรีชญา", "nickname": "อ้น", "photo": "7474.png"}],
+  "0819139955": [{"dir": "ndc57", "cid": "9005", "group_id": "11", "tname": "ดุษฎี รามสมภพ", "nickname": "ดุษ", "photo": "9005.png"}],
+  "0819146170": [{"dir": "ndc57", "cid": "9006", "group_id": "11", "tname": "สายัณห์ บุญแต่ง", "nickname": "เท่ง", "photo": "9006.png"}],
+  "0819169363": [{"dir": "abc7", "cid": "44", "group_id": "09", "tname": "นุช  หอมรสสุคนธ์", "nickname": "นุช", "photo": "44.png"}],
+  "0819173179": [{"dir": "ndc57", "cid": "7751", "group_id": "01", "tname": "อาชวันต์ โชติกเสถียร", "nickname": "แป๊ะ,ปาน", "photo": "7751.png"}],
+  "0819190100": [{"dir": "ndc57", "cid": "9008", "group_id": "11", "tname": "ธิวา เพ็ญเขตกรณ์", "nickname": "ธิวา", "photo": "9008.png"}],
+  "0819208859": [{"dir": "abc7", "cid": "43", "group_id": "05", "tname": "นิธิ ชื่นถนอมบุญ", "nickname": "ธิ", "photo": "43.png"}],
+  "0819210650": [{"dir": "ndc57", "cid": "7589", "group_id": "08", "tname": "ปริพัฒน์ ผลาสินธุ์", "nickname": "เบิร์ด", "photo": "7589.png"}],
+  "0819212742": [{"dir": "abc7", "cid": "125", "group_id": "10", "tname": "อวัช อัชวงศ์", "nickname": "คิว", "photo": "125.png"}],
+  "0819230022": [{"dir": "ndc57", "cid": "7593", "group_id": "04", "tname": "ปิติพงศ์ พิศาลบุตร", "nickname": "โอ๊ด", "photo": "7593.png"}],
+  "0819233253": [{"dir": "ndc57", "cid": "7724", "group_id": "10", "tname": "สุรศักดิ์ พุทธานุภาพ", "nickname": "จิ๋ว", "photo": "7724.png"}],
+  "0819247221": [{"dir": "ndc57", "cid": "7537", "group_id": "02", "tname": "ทศพล ทังสุบุตร", "nickname": "เอก", "photo": "7537.png"}],
+  "0819252932": [{"dir": "ndc57", "cid": "7521", "group_id": "03", "tname": "เชษฐ์ รมยะนันทน์", "nickname": "เป้", "photo": "7521.png"}],
+  "0819281482": [{"dir": "ndc57", "cid": "7567", "group_id": "09", "tname": "เนรมิตร มณีนุตร์", "nickname": "เหน่ง", "photo": "7567.png"}],
+  "0819289942": [{"dir": "abc7", "cid": "32", "group_id": "02", "tname": "ธนเสฏฐ์ อัครบุญญาพัฒน์", "nickname": "Cee", "photo": "32.png"}],
+  "0819289955": [{"dir": "abc7", "cid": "118", "group_id": "07", "tname": "อรจิรา แหลมวิไล", "nickname": "แป้ง", "photo": "118.png"}],
+  "0819301045": [{"dir": "ndc57", "cid": "7722", "group_id": "06", "tname": "สุรพล พุทธมนต์", "nickname": "ตุ่น", "photo": "7722.png"}],
+  "0819327685": [{"dir": "ndc57", "cid": "7587", "group_id": "06", "tname": "ประเสริฐ ปิ่นปฐมรัฐ", "nickname": "อั๊ง", "photo": "7587.png"}],
+  "0819375708": [{"dir": "ndc57", "cid": "7613", "group_id": "03", "tname": "เพ็ชรี รัตนเศรษฐ์", "nickname": "จุ๋ม", "photo": "7613.png"}],
+  "0819392333": [{"dir": "ndc57", "cid": "7482", "group_id": "05", "tname": "กูรดิสถ์ จันทร์ศรีชวาลา", "nickname": "จั๊น", "photo": "7482.png"}],
+  "0819392929": [{"dir": "ndc57", "cid": "7726", "group_id": "02", "tname": "สุระพล อยู่ดี", "nickname": "ตุ้ย", "photo": "7726.png"}],
+  "0819432534": [{"dir": "ndc57", "cid": "7487", "group_id": "05", "tname": "ไกรสร จันทร์เรือง", "nickname": "หนึ่ง", "photo": "7487.png"}],
+  "0819515551": [{"dir": "ndc57", "cid": "7612", "group_id": "06", "tname": "พูลสิริ ธรรมสโรช", "nickname": "ปุ่ม", "photo": "7612.png"}],
+  "0819519596": [{"dir": "ndc57", "cid": "7693", "group_id": "10", "tname": "สายัณห์ เมืองศรี", "nickname": "ยัณ", "photo": "7693.png"}],
+  "0819521829": [{"dir": "ndc57", "cid": "7629", "group_id": "09", "tname": "แมน ศีตะจิตต์", "nickname": "แมน", "photo": "7629.png"}],
+  "0819539924": [{"dir": "ndc57", "cid": "7692", "group_id": "06", "tname": "สาธิต เหล่าสุวรรณ", "nickname": "บิ๊ก", "photo": "7692.png"}],
+  "0819572054": [{"dir": "ndc57", "cid": "7757", "group_id": "01", "tname": "เอกพันธ์ สุวรรณวิจิตร", "nickname": "เทิง", "photo": "7757.png"}],
+  "0819661935": [{"dir": "ndc57", "cid": "7512", "group_id": "05", "tname": "ชวลิต สาลีติ๊ด", "nickname": "ติ๊ด", "photo": "7512.png"}],
+  "0819695035": [{"dir": "ndc57", "cid": "7691", "group_id": "10", "tname": "สัมพันธ์ มูซอดี", "nickname": "ดิง", "photo": "7691.png"}],
+  "0819758735": [{"dir": "ndc57", "cid": "7579", "group_id": "03", "tname": "ประกอบ วิวิธจินดา", "nickname": "กอบ", "photo": "7579.png"}],
+  "0819824290": [{"dir": "ndc57", "cid": "7657", "group_id": "08", "tname": "วีรศักดิ์ วิศาลาภรณ์", "nickname": "แป๊ะ", "photo": "7657.png"}],
+  "0819875112": [{"dir": "ndc57", "cid": "7678", "group_id": "04", "tname": "สมชาย สุมนัสขจรกุล", "nickname": "เคี้ยง", "photo": "7678.png"}],
+  "0819879449": [{"dir": "ndc57", "cid": "7633", "group_id": "10", "tname": "รอย อิงคไพโรจน์", "nickname": "รอย", "photo": "7633.png"}],
+  "0819902710": [{"dir": "ndc57", "cid": "7631", "group_id": "07", "tname": "ยอร์น จิระนคร", "nickname": "ยอร์น", "photo": "7631.png"}],
+  "0819943776": [{"dir": "ndc57", "cid": "7523", "group_id": "04", "tname": "ณรงค์ อภิกุลวณิช", "nickname": "โจ๊ก", "photo": "7523.png"}],
+  "0819992956": [{"dir": "abc7", "cid": "96", "group_id": "05", "tname": "สพโชค ไชยะเพ็ชรรัตน์", "nickname": "เต่า", "photo": "96.png"}],
+  "0823388999": [{"dir": "ndc57", "cid": "7748", "group_id": "05", "tname": "อภิรัต นิยมการ", "nickname": "หม่อม", "photo": "7748.png"}],
+  "0824591515": [{"dir": "abc7", "cid": "105", "group_id": "01", "tname": "สิรโสมย์ บริสุทธิ์สุวรรณ์", "nickname": "สิ", "photo": "105.png"}],
+  "0826407778": [{"dir": "ndc57", "cid": "7508", "group_id": "09", "tname": "ชโยดม สรรพศรี", "nickname": "ปิ่น", "photo": "7508.png"}],
+  "0826449642": [{"dir": "ndc57", "cid": "7651", "group_id": "06", "tname": "วิโรจน์ ศิลาอาศน์", "nickname": "เผือก", "photo": "7651.png"}],
+  "0830401999": [{"dir": "ndc57", "cid": "9009", "group_id": "11", "tname": "ก้องเกียรติ พลขันธ์", "nickname": "ต๋อย", "photo": "9009.png"}],
+  "0833046699": [{"dir": "abc7", "cid": "131", "group_id": "04", "tname": "เอกชัย ปาริชาติกานนท์", "nickname": "เอก", "photo": "131.png"}],
+  "0834361110": [{"dir": "ndc57", "cid": "9015", "group_id": "11", "tname": "สมชาย สังขมณี", "nickname": "สังข์", "photo": "9015.png"}],
+  "0834455999": [{"dir": "abc7", "cid": "117", "group_id": "07", "tname": "อภิธา วัลลภศิริ", "nickname": "Tony", "photo": "117.png"}],
+  "0839483355": [{"dir": "ndc57", "cid": "7752", "group_id": "01", "tname": "อำนาจ เดชะ", "nickname": "แดง", "photo": "7752.png"}],
+  "0841420939": [{"dir": "abc7", "cid": "37", "group_id": "09", "tname": "ธิวินท์ ศรีนคารินทร์", "nickname": "Vin", "photo": "37.png"}],
+  "0843877040": [{"dir": "ndc57", "cid": "7682", "group_id": "10", "tname": "สมศักดิ์ ดลประสิทธิ์", "nickname": "ศักดิ์", "photo": "7682.png"}],
+  "0844445465": [{"dir": "abc7", "cid": "79", "group_id": "09", "tname": "รตา เฉลิมลาภสมบัติ", "nickname": "ize", "photo": "79.png"}],
+  "0846192222": [{"dir": "abc7", "cid": "20", "group_id": "03", "tname": "ณัฏฐทยาวีร์ ราชสมบูรณ์", "nickname": "ปุ้ย", "photo": "20.png"}],
+  "0846739999": [{"dir": "ndc57", "cid": "7679", "group_id": "05", "tname": "สมชาย เอื้ออารีรัชต์", "nickname": "ขาว", "photo": "7679.png"}],
+  "0847002512": [{"dir": "ndc57", "cid": "7652", "group_id": "07", "tname": "วิไล ตันตินันท์ธนา", "nickname": "วิ", "photo": "7652.png"}],
+  "0847006122": [{"dir": "ndc57", "cid": "7635", "group_id": "03", "tname": "รัฐเดช จุลวุฒิ", "nickname": "โอ๊ค", "photo": "7635.png"}],
+  "0847009959": [{"dir": "ndc57", "cid": "7533", "group_id": "08", "tname": "ถวิล เพิ่มเพียรสิน", "nickname": "หวิล", "photo": "7533.png"}],
+  "0847179046": [{"dir": "ndc57", "cid": "7595", "group_id": "05", "tname": "ปิยะ รัชต์ธรบัวทิพย์", "nickname": "ยะ", "photo": "7595.png"}],
+  "0847514950": [{"dir": "ndc57", "cid": "9003", "group_id": "11", "tname": "จุมพล เฉลยถ้อย", "nickname": "จุ๋ม", "photo": "9003.png"}],
+  "0848196333": [{"dir": "ndc57", "cid": "7692", "group_id": "06", "tname": "สาธิต เหล่าสุวรรณ", "nickname": "บิ๊ก", "photo": "7692.png"}],
+  "0848696888": [{"dir": "ndc57", "cid": "7729", "group_id": "01", "tname": "สุวิชา แก้วรุ่งเรือง", "nickname": "อู๊ด", "photo": "7729.png"}],
+  "0848740229": [{"dir": "ndc57", "cid": "7687", "group_id": "07", "tname": "สรายุทธ์ มหัตกีรติ", "nickname": "แป๊ก", "photo": "7687.png"}],
+  "0848740244": [{"dir": "ndc57", "cid": "7559", "group_id": "02", "tname": "น้อย ภาคเพิ่ม", "nickname": "น้อย", "photo": "7559.png"}],
+  "0848740355": [{"dir": "ndc57", "cid": "7585", "group_id": "04", "tname": "ประยูร ธรรมาธิวัฒน์", "nickname": "ยูร", "photo": "7585.png"}],
+  "0848748309": [{"dir": "ndc57", "cid": "7552", "group_id": "03", "tname": "ธีระพงษ์ วงศ์ศิวะวิลาส", "nickname": "กิ๊ก", "photo": "7552.png"}],
+  "0849355555": [{"dir": "ndc57", "cid": "7481", "group_id": "05", "tname": "กุลธน ประจวบเหมาะ", "nickname": "ต้น", "photo": "7481.png"}],
+  "0850985555": [{"dir": "abc7", "cid": "9", "group_id": "05", "tname": "คล้ายเดือน พานิชชีวะ", "nickname": "Klai", "photo": "9.png"}],
+  "0851205555": [{"dir": "abc7", "cid": "89", "group_id": "09", "tname": "ศรุศักดิ์ ศักดิเดช ภาณุพันธ์", "nickname": "แพทริค", "photo": "89.png"}],
+  "0851221111": [{"dir": "abc7", "cid": "46", "group_id": "05", "tname": "บุญลือ ประเสริฐโสภา", "nickname": "ลือ", "photo": "46.png"}],
+  "0851495642": [{"dir": "abc7", "cid": "101", "group_id": "08", "tname": "สารชา ฤดีสุนันท์", "nickname": "ป้อ", "photo": "101.png"}],
+  "0853310699": [{"dir": "ndc57", "cid": "7478", "group_id": "10", "tname": "กิตติเชษฐ์ ศรดิษฐพันธ์", "nickname": "อี๊ด", "photo": "7478.png"}],
+  "0853470228": [{"dir": "ndc57", "cid": "9023", "group_id": "11", "tname": "ประเทือง ปิยกะโพธิ์", "nickname": "เทือง", "photo": "9023.png"}],
+  "0854164242": [{"dir": "abc7", "cid": "100", "group_id": "07", "tname": "สาธิตา จิรพัฒนกุล", "nickname": "ไข่หวาน", "photo": "100.png"}],
+  "0854499538": [{"dir": "ndc57", "cid": "7520", "group_id": "07", "tname": "ชุมศักดิ์ นาควิจิตร", "nickname": "ชุม", "photo": "7520.png"}],
+  "0854814552": [{"dir": "ndc57", "cid": "7702", "group_id": "01", "tname": "สุชาติ ผดุงกิจ", "nickname": "เจี๊ยบ", "photo": "7702.png"}],
+  "0854854515": [{"dir": "ndc57", "cid": "7509", "group_id": "10", "tname": "ชลิดา โชไชย", "nickname": "ติ๊ก", "photo": "7509.png"}],
+  "0854889542": [{"dir": "ndc57", "cid": "7573", "group_id": "10", "tname": "บุญชู ประสพกิจถาวร", "nickname": "ล้ง", "photo": "7573.png"}],
+  "0856490489": [{"dir": "ndc57", "cid": "7489", "group_id": "01", "tname": "คำรณ เครือวิชฌยาจารย์", "nickname": "กิ้ง", "photo": "7489.png"}],
+  "0858568818": [{"dir": "abc7", "cid": "119", "group_id": "04", "tname": "อรนิดา นิมมิต", "nickname": "ฟ้า", "photo": "119.png"}],
+  "0859114205": [{"dir": "ndc57", "cid": "7539", "group_id": "03", "tname": "ธงชัย ชาสวัสดิ์", "nickname": "แกะ", "photo": "7539.png"}],
+  "0859295944": [{"dir": "abc7", "cid": "56", "group_id": "09", "tname": "พงศกร พงษ์ศักดิ์", "nickname": "เป้", "photo": "56.png"}],
+  "0860996058": [{"dir": "ndc57", "cid": "9019", "group_id": "11", "tname": "ชำนาญ ช้างสาต", "nickname": "ช้าง", "photo": "9019.png"}],
+  "0860996082": [{"dir": "ndc57", "cid": "9017", "group_id": "11", "tname": "วิโรจน์ เกิดแสง", "nickname": "เล็ก", "photo": "9017.png"}],
+  "0860996084": [{"dir": "ndc57", "cid": "9018", "group_id": "11", "tname": "เลอพงษ์ บุญชนะภักดี", "nickname": "น้อย", "photo": "9018.png"}],
+  "0860996125": [{"dir": "ndc57", "cid": "9021", "group_id": "11", "tname": "โสภณ ศิริงาม", "nickname": "โส", "photo": "9021.png"}],
+  "0862226222": [{"dir": "abc7", "cid": "49", "group_id": "09", "tname": "ประเสริฐ ตันพิบูลย์ศักดิ์", "nickname": "ยนต์", "photo": "49.png"}],
+  "0863094224": [{"dir": "ndc57", "cid": "7570", "group_id": "03", "tname": "บัณฑิต สุวัฑฒน", "nickname": "ตั้ม", "photo": "7570.png"}],
+  "0864662893": [{"dir": "ndc57", "cid": "7590", "group_id": "02", "tname": "ปรีชา บุญเรืองศรี", "nickname": "ตุ๋ย", "photo": "7590.png"}],
+  "0865488199": [{"dir": "ndc57", "cid": "7485", "group_id": "05", "tname": "เกรียงไกร อนันตศานต์", "nickname": "เอ็ด", "photo": "7485.png"}],
+  "0865594199": [{"dir": "abc7", "cid": "30", "group_id": "06", "tname": "ธนพล วิทยาภัทร์", "nickname": "นัท", "photo": "30.png"}],
+  "0867798122": [{"dir": "ndc57", "cid": "7555", "group_id": "03", "tname": "นพดล มังคละทน", "nickname": "ปู่", "photo": "7555.png"}],
+  "0867897171": [{"dir": "ndc57", "cid": "7586", "group_id": "08", "tname": "ประสาน ประวัติรุ่งเรือง", "nickname": "สาน", "photo": "7586.png"}],
+  "0868877777": [{"dir": "abc7", "cid": "16", "group_id": "05", "tname": "ชัชวัฏ สุวรรณโณชิน", "nickname": "ทอม", "photo": "16.png"}],
+  "0868884545": [{"dir": "abc7", "cid": "33", "group_id": "01", "tname": "ธนา ทุมมานนท์", "nickname": "bay", "photo": "33.png"}],
+  "0869179797": [{"dir": "abc7", "cid": "109", "group_id": "06", "tname": "สุธาสินี จิตรสกุล", "nickname": "SOM", "photo": "109.png"}],
+  "0869541111": [{"dir": "abc7", "cid": "25", "group_id": "02", "tname": "ณัฐวุฒิ หิรัญพันธุ์ทิพย์", "nickname": "Wut", "photo": "25.png"}],
+  "0869807788": [{"dir": "ndc57", "cid": "7476", "group_id": "08", "tname": "กฤษณะ วจีไกรลาศ", "nickname": "นะ", "photo": "7476.png"}],
+  "0870488202": [{"dir": "ndc57", "cid": "7603", "group_id": "07", "tname": "พรประสิทธิ์ กล่ำสมบัติ", "nickname": "ต่าย", "photo": "7603.png"}],
+  "0870741376": [{"dir": "ndc57", "cid": "7600", "group_id": "09", "tname": "พร ภิเศก", "nickname": null, "photo": "7600.png"}],
+  "0871251788": [{"dir": "ndc57", "cid": "7697", "group_id": "02", "tname": "สิทธิพล นิ่มนวล", "nickname": "เอ๊ด", "photo": "7697.png"}],
+  "0872222777": [{"dir": "abc7", "cid": "120", "group_id": "02", "tname": "อรรถกวี ขุนพินิจ", "nickname": "อรรถ", "photo": "120.png"}],
+  "0874048228": [{"dir": "ndc57", "cid": "7675", "group_id": "03", "tname": "สมเกียรติ คุววัฒนานนท์", "nickname": "ตรง", "photo": "7675.png"}],
+  "0874999415": [{"dir": "abc7", "cid": "95", "group_id": "04", "tname": "สกุณภัค ชัยประชา", "nickname": "ซี", "photo": "95.png"}],
+  "0875466666": [{"dir": "abc7", "cid": "132", "group_id": "10", "tname": "เอริสา ยุติธรรมดำรง", "nickname": "เอริ", "photo": "132.png"}],
+  "0875636666": [{"dir": "abc7", "cid": "26", "group_id": "06", "tname": "ณัท มานะสมจิตร", "nickname": "Boom", "photo": "26.png"}],
+  "0879138888": [{"dir": "ndc57", "cid": "7618", "group_id": "06", "tname": "ภาคิน สมมิตรธนกุล", "nickname": "เล็ก", "photo": "7618.png"}],
+  "0879891695": [{"dir": "ndc57", "cid": "7620", "group_id": "09", "tname": "ภารดี จงสุขธนามณี", "nickname": "จุ๊", "photo": "7620.png"}],
+  "0879959954": [{"dir": "abc7", "cid": "88", "group_id": "02", "tname": "วิริฒิพา ภักดีประสงค์", "nickname": "วุ้นเส้น", "photo": "88.png"}],
+  "0880368888": [{"dir": "abc7", "cid": "59", "group_id": "05", "tname": "พชร อารยะการกุล", "nickname": "โบ๊ท", "photo": "59.png"}],
+  "0882212075": [{"dir": "ndc57", "cid": "7536", "group_id": "09", "tname": "ทวีศักดิ์ บุญรักชาติ", "nickname": "น้อย", "photo": "7536.png"}],
+  "0883017015": [{"dir": "ndc57", "cid": "7588", "group_id": "02", "tname": "ประเสริฐ ลือชาธนานนท์", "nickname": "จิว", "photo": "7588.png"}],
+  "0884888999": [{"dir": "ndc57", "cid": "9010", "group_id": "11", "tname": "วัฒนา ฤทธิ์เรืองเดช", "nickname": "เต้ย", "photo": "9010.png"}],
+  "0889991111": [{"dir": "ndc57", "cid": "7683", "group_id": "04", "tname": "สมศักดิ์ อัศวศิริศิลป์", "nickname": "เม้ง", "photo": "7683.png"}],
+  "0890120100": [{"dir": "ndc57", "cid": "7503", "group_id": "09", "tname": "จุมพล พันธุ์สัมฤทธิ์", "nickname": "จุม", "photo": "7503.png"}],
+  "0890509917": [{"dir": "ndc57", "cid": "7750", "group_id": "07", "tname": "อัศฎางค์ สัจจปาละ", "nickname": "อ๊อด", "photo": "7750.png"}],
+  "0890661392": [{"dir": "ndc57", "cid": "7648", "group_id": "02", "tname": "วิพันธุ์ ชมะโชติ", "nickname": "หมึก", "photo": "7648.png"}],
+  "0891058505": [{"dir": "ndc57", "cid": "7737", "group_id": "09", "tname": "อดิศร์ กฤษณวงศ์", "nickname": "โจ้", "photo": "7737.png"}],
+  "0891244911": [{"dir": "abc7", "cid": "98", "group_id": "07", "tname": "สมศรี ตติยานุพันธ์วงศ์", "nickname": "น้อย", "photo": "98.png"}],
+  "0891661222": [{"dir": "abc7", "cid": "58", "group_id": "08", "tname": "พงษ์ชัย ชัญมาตรกิจ", "nickname": "ชัย", "photo": "58.png"}],
+  "0891661994": [{"dir": "abc7", "cid": "84", "group_id": "06", "tname": "วาทินี กวีญาณ", "nickname": "ตุ๊กตา", "photo": "84.png"}],
+  "0891861866": [{"dir": "abc7", "cid": "3", "group_id": "01", "tname": "กังวาน เหล่าวิโรจนกุล", "nickname": "กัง", "photo": "3.png"}],
+  "0891931935": [{"dir": "ndc57", "cid": "7488", "group_id": "07", "tname": "ขจรฤทธิ์ นิลกำแหง", "nickname": "บู", "photo": "7488.png"}],
+  "0892001770": [{"dir": "abc7", "cid": "111", "group_id": "01", "tname": "เสริมสกุล วงศ์ถิรพร", "nickname": "Bob", "photo": "111.png"}],
+  "0892011190": [{"dir": "ndc57", "cid": "7649", "group_id": "05", "tname": "วิมลลักษณ์ ชูชาติ", "nickname": "แดง", "photo": "7649.png"}],
+  "0892018137": [{"dir": "ndc57", "cid": "7664", "group_id": "04", "tname": "ศศิศ มนต์เสรีนุสรณ์", "nickname": "ไก่", "photo": "7664.png"}],
+  "0892031493": [{"dir": "ndc57", "cid": "7582", "group_id": "08", "tname": "ประจญ ปรัชญ์สกุล", "nickname": "น้อย", "photo": "7582.png"}],
+  "0892032831": [{"dir": "ndc57", "cid": "7479", "group_id": "10", "tname": "กิติบดี ประวิตร", "nickname": "ป๊อบ", "photo": "7479.png"}],
+  "0894252222": [{"dir": "abc7", "cid": "2", "group_id": "08", "tname": "กล้ายุทธ จินตนะกุล", "nickname": "ตั๋ง", "photo": "2.png"}],
+  "0894481379": [{"dir": "abc7", "cid": "67", "group_id": "01", "tname": "พิรัส ศิริขวัญชัย", "nickname": "เอี่ยม", "photo": "67.png"}],
+  "0894489011": [{"dir": "ndc57", "cid": "7530", "group_id": "04", "tname": "ดำริห์ สุขพันธุ์", "nickname": "เข้", "photo": "7530.png"}],
+  "0895002812": [{"dir": "ndc57", "cid": "7562", "group_id": "02", "tname": "นาวา จันทนสุรคน", "nickname": "เรือ", "photo": "7562.png"}],
+  "0895334888": [{"dir": "ndc57", "cid": "9012", "group_id": "11", "tname": "สรานุวัตร ประดิษฐพงษ์", "nickname": "ตุ่น", "photo": "9012.png"}],
+  "0895584411": [{"dir": "ndc57", "cid": "7619", "group_id": "01", "tname": "ภาณุวัฒน์ เหนียวแน่น", "nickname": "เหนียว", "photo": "7619.png"}],
+  "0895699808": [{"dir": "ndc57", "cid": "7645", "group_id": "09", "tname": "วิทยา วรรคาวิสันต์", "nickname": "น้อย", "photo": "7645.png"}],
+  "0896674926": [{"dir": "abc7", "cid": "60", "group_id": "02", "tname": "พนาสิน จึงสวนันทน์", "nickname": "พีค", "photo": "60.png"}],
+  "0896684526": [{"dir": "ndc57", "cid": "7568", "group_id": "09", "tname": "บรรจงจิตต์ อังศุสิงห์", "nickname": "เจี๊ยบ", "photo": "7568.png"}],
+  "0897712556": [{"dir": "abc7", "cid": "68", "group_id": "08", "tname": "พีรณัฎฐ์ ตันติพจน์", "nickname": "ป้อม", "photo": "68.png"}],
+  "0897899515": [{"dir": "ndc57", "cid": "7674", "group_id": "01", "tname": "เศรษฐพงค์ มะลิสุวรรณ", "nickname": "มาร์ช", "photo": "7674.png"}],
+  "0898088844": [{"dir": "ndc57", "cid": "7608", "group_id": "08", "tname": "พิชญ์ โชติสุต", "nickname": "ตั้ว", "photo": "7608.png"}],
+  "0898105655": [{"dir": "ndc57", "cid": "7596", "group_id": "10", "tname": "ปีติ นาถะภักติ", "nickname": "ป๊อก", "photo": "7596.png"}],
+  "0898115125": [{"dir": "ndc57", "cid": "7758", "group_id": "02", "tname": "เอด วิบูลย์เจริญ", "nickname": "เอด", "photo": "7758.png"}],
+  "0898141595": [{"dir": "ndc57", "cid": "7703", "group_id": "03", "tname": "สุชาติ พรชัยวิเศษกุล", "nickname": "เบ้ง", "photo": "7703.png"}],
+  "0898239891": [{"dir": "ndc57", "cid": "7548", "group_id": "06", "tname": "ธวัชชัย ฤทธากรณ์", "nickname": "ขีด", "photo": "7548.png"}],
+  "0898500345": [{"dir": "ndc57", "cid": "7505", "group_id": "05", "tname": "เจริญฤทธิ์ สงวนสัตย์", "nickname": "จอย", "photo": "7505.png"}],
+  "0898567956": [{"dir": "ndc57", "cid": "7542", "group_id": "01", "tname": "ธวัช ศรีสว่าง", "nickname": "เปี๊ยก", "photo": "7542.png"}],
+  "0898906755": [{"dir": "abc7", "cid": "42", "group_id": "03", "tname": "นิธนา เมลืองนนท์", "nickname": "นิธ", "photo": "42.png"}],
+  "0898927885": [{"dir": "abc7", "cid": "69", "group_id": "06", "tname": "พีระ เทียนไพฑูรย์", "nickname": "อู๋", "photo": "69.png"}],
+  "0898955902": [{"dir": "abc7", "cid": "127", "group_id": "04", "tname": "อัศวิน ปั้นศิริ", "nickname": "win", "photo": "127.png"}],
+  "0898964059": [{"dir": "ndc57", "cid": "7700", "group_id": "09", "tname": "สุจินดา สุมามาลย์", "nickname": "ป่อง", "photo": "7700.png"}],
+  "0898977887": [{"dir": "abc7", "cid": "11", "group_id": "04", "tname": "จิรัฐ บวรวัฒนะ", "nickname": "ต้อม", "photo": "11.png"}],
+  "0899110910": [{"dir": "abc7", "cid": "17", "group_id": "09", "tname": "ชัญญา วาณิชศรุต", "nickname": "เอ", "photo": "17.png"}],
+  "0899209260": [{"dir": "ndc57", "cid": "7601", "group_id": "09", "tname": "พรชัย จันศิษย์ยานนท์", "nickname": "จัน", "photo": "7601.png"}],
+  "0899229091": [{"dir": "ndc57", "cid": "7611", "group_id": "04", "tname": "พิษณุ บุญรักษา", "nickname": "ปุ๋ย", "photo": "7611.png"}],
+  "0899441515": [{"dir": "ndc57", "cid": "7493", "group_id": "06", "tname": "จรรยา พุคยาภรณ์", "nickname": "เจี๊ยบ", "photo": "7493.png"}],
+  "0899477755": [{"dir": "ndc57", "cid": "7525", "group_id": "08", "tname": "ณัฐชนก ศิริทีปตานนท์", "nickname": "นก", "photo": "7525.png"}],
+  "0899621789": [{"dir": "ndc57", "cid": "7490", "group_id": "04", "tname": "โฆสิต เจียมศุภกิตต์", "nickname": "ตึ๊บ", "photo": "7490.png"}],
+  "0899642559": [{"dir": "ndc57", "cid": "7699", "group_id": "03", "tname": "สุกิตติ เสงี่ยมพงษ์", "nickname": "เต้ย", "photo": "7699.png"}],
+  "0899652511": [{"dir": "ndc57", "cid": "7623", "group_id": "05", "tname": "มนัสวี บูรณพงศ์", "nickname": "อ้าย", "photo": "7623.png"}],
+  "0899671197": [{"dir": "ndc57", "cid": "7548", "group_id": "06", "tname": "ธวัชชัย ฤทธากรณ์", "nickname": "ขีด", "photo": "7548.png"}],
+  "0899685911": [{"dir": "ndc57", "cid": "7755", "group_id": "05", "tname": "อุษณี กังวารจิตต์", "nickname": "ติ๋ม", "photo": "7755.png"}],
+  "0899690134": [{"dir": "ndc57", "cid": "7597", "group_id": "08", "tname": "เปรมฤทัย วินัยแพทย์", "nickname": "นาย", "photo": "7597.png"}],
+  "0899692013": [{"dir": "ndc57", "cid": "7653", "group_id": "01", "tname": "วิสุนี บุนนาค", "nickname": "ติ๋ม", "photo": "7653.png"}],
+  "0899695006": [{"dir": "ndc57", "cid": "7711", "group_id": "03", "tname": "สุทธิศักดิ์ สลักคำ", "nickname": "ตู่", "photo": "7711.png"}],
+  "0899695057": [{"dir": "ndc57", "cid": "7741", "group_id": "07", "tname": "อนุชิต อินทรทัต", "nickname": "โก้", "photo": "7741.png"}],
+  "0899695071": [{"dir": "ndc57", "cid": "7591", "group_id": "10", "tname": "ปรีชาญ จามเจริญ", "nickname": "ชาญ", "photo": "7591.png"}],
+  "0899695129": [{"dir": "ndc57", "cid": "7558", "group_id": "07", "tname": "นเรศน์ มีลาภ", "nickname": "อู๊ด", "photo": "7558.png"}],
+  "0899697021": [{"dir": "ndc57", "cid": "7728", "group_id": "04", "tname": "สุวัฒน์ เปี่ยมปัจจัย", "nickname": "วัฒน์", "photo": "7728.png"}],
+  "0899698066": [{"dir": "abc7", "cid": "21", "group_id": "07", "tname": "ณัฐคม รุ่งรัศมี", "nickname": "อ๊อด", "photo": "21.png"}],
+  "0899812575": [{"dir": "ndc57", "cid": "7684", "group_id": "07", "tname": "สมหมาย วงษ์จันทร์", "nickname": "อ้น", "photo": "7684.png"}],
+  "0899881596": [{"dir": "abc7", "cid": "72", "group_id": "06", "tname": "ภัทรวดี อวัสดาพร", "nickname": "นัท", "photo": "72.png"}],
+  "0899952446": [{"dir": "ndc57", "cid": "7740", "group_id": "08", "tname": "อนุชา รักเรือง", "nickname": "เอ๋", "photo": "7740.png"}],
+  "0899993655": [{"dir": "abc7", "cid": "113", "group_id": "08", "tname": "อชิรญา อิงคตานุวัฒน์", "nickname": "จิ๊บ ", "photo": "113.png"}],
+  "0904654465": [{"dir": "abc7", "cid": "78", "group_id": "07", "tname": "รณกาจ ชินสำราญ", "nickname": "เอ๊ะ", "photo": "78.png"}],
+  "0905699956": [{"dir": "ndc57", "cid": "7748", "group_id": "05", "tname": "อภิรัต นิยมการ", "nickname": "หม่อม", "photo": "7748.png"}],
+  "0909687490": [{"dir": "abc7", "cid": "87", "group_id": "04", "tname": "วิภาดา แววมณี", "nickname": "ทราย", "photo": "87.png"}],
+  "0909739421": [{"dir": "ndc57", "cid": "7592", "group_id": "05", "tname": "ปัทมา นาถะภักติ", "nickname": "ซุป", "photo": "7592.png"}],
+  "0909791111": [{"dir": "abc7", "cid": "107", "group_id": "08", "tname": "สุชัชวีร์ สุวรรณสวัสดิ์", "nickname": "เอ้", "photo": "107.png"}],
+  "0914624415": [{"dir": "abc7", "cid": "48", "group_id": "10", "tname": "ปนิดา ศรีชัย", "nickname": "แอ้", "photo": "48.png"}],
+  "0914696655": [{"dir": "abc7", "cid": "91", "group_id": "05", "tname": "ศิริพิชญ์ วิมลโนช", "nickname": "กีต้าร์", "photo": "91.png"}],
+  "0915413875": [{"dir": "abc7", "cid": "70", "group_id": "02", "tname": "เพ็ญประภา ตระกูลกิจเจริญ", "nickname": "นุ่น", "photo": "70.png"}],
+  "0915566999": [{"dir": "abc7", "cid": "93", "group_id": "01", "tname": "ศุภณัฐค์ น้อยโสภณ", "nickname": "โอน", "photo": "93.png"}],
+  "0915654656": [{"dir": "abc7", "cid": "76", "group_id": "07", "tname": "มุตตา วิกรัยศักดา", "nickname": "FA", "photo": "76.png"}],
+  "0917439999": [{"dir": "abc7", "cid": "52", "group_id": "04", "tname": "ปัญญา บุญญาภิวัฒน์", "nickname": "เจ๋ง", "photo": "52.png"}],
+  "0917725204": [{"dir": "abc7", "cid": "62", "group_id": "07", "tname": "พัฒน์นรี ภักดีคณาเศรษฐ์", "nickname": "หลี", "photo": "62.png"}],
+  "0918371993": [{"dir": "ndc57", "cid": "7745", "group_id": "06", "tname": "อภิชาติ ชามาตย์", "nickname": "อู๊ด", "photo": "7745.png"}],
+  "0919088888": [{"dir": "abc7", "cid": "57", "group_id": "10", "tname": "พงศภัค จินดาสมบัติเจริญ", "nickname": "พีท", "photo": "57.png"}],
+  "0919546224": [{"dir": "abc7", "cid": "126", "group_id": "08", "tname": "อัญณิช์ภา สุวรรณวลัยกร", "nickname": "Jan", "photo": "126.png"}],
+  "0919825655": [{"dir": "abc7", "cid": "34", "group_id": "07", "tname": "ธรรม์ธีร์ สุกโชติรัตน์", "nickname": "เรือบิน", "photo": "34.png"}],
+  "0921539245": [{"dir": "ndc57", "cid": "7606", "group_id": "07", "tname": "พสิษฐ์ อัศววัฒนาพร", "nickname": "โต", "photo": "7606.png"}],
+  "0922299829": [{"dir": "abc7", "cid": "121", "group_id": "01", "tname": "อรอร อัครเศรณี", "nickname": "อ๊อบ", "photo": "121.png"}],
+  "0924235966": [{"dir": "abc7", "cid": "129", "group_id": "07", "tname": "อุมาพร ว่องวัฒนะสิน", "nickname": "อุ", "photo": "129.png"}],
+  "0925294997": [{"dir": "abc7", "cid": "97", "group_id": "07", "tname": "สมบัติ ชาญยุทธกร", "nickname": "Peter", "photo": "97.png"}],
+  "0925453665": [{"dir": "abc7", "cid": "99", "group_id": "10", "tname": "สยาม บางกุลธรรม", "nickname": "โก้", "photo": "99.png"}],
+  "0925615994": [{"dir": "ndc57", "cid": "9020", "group_id": "11", "tname": "อารยะ มิ่งภัทรพล", "nickname": "เอ๋", "photo": "9020.png"}],
+  "0925925555": [{"dir": "ndc57", "cid": "7640", "group_id": "03", "tname": "วันชัย คงเกษม", "nickname": "หนุ่ย", "photo": "7640.png"}],
+  "0926659665": [{"dir": "abc7", "cid": "66", "group_id": "09", "tname": "พิมพิศา จิราธิวัฒน์", "nickname": "แพร์", "photo": "66.png"}],
+  "0928199966": [{"dir": "abc7", "cid": "22", "group_id": "07", "tname": "ณัฐนิพัท กองพัทธนันท์", "nickname": "เอ็ม", "photo": "22.png"}],
+  "0928234060": [{"dir": "ndc57", "cid": "7544", "group_id": "03", "tname": "ธรณิศวร์ โรจนสุวรรณ", "nickname": "แก้ว", "photo": "7544.png"}],
+  "0928844456": [{"dir": "abc7", "cid": "130", "group_id": "08", "tname": "อุษา เกียรติเชิดแสงสุข", "nickname": "อุษา", "photo": "130.png"}],
+  "0929294692": [{"dir": "abc7", "cid": "27", "group_id": "10", "tname": "เทพวรรณ คณินวรพันธุ์", "nickname": "บาส", "photo": "27.png"}],
+  "0935353546": [{"dir": "ndc57", "cid": "7483", "group_id": "05", "tname": "กู้เกียรติ ศรีนาคา", "nickname": "ตู่", "photo": "7483.png"}],
+  "0935354959": [{"dir": "ndc57", "cid": "7644", "group_id": "06", "tname": "วิทยา จันทร์ฉลอง", "nickname": "เต่า", "photo": "7644.png"}],
+  "0935619396": [{"dir": "abc7", "cid": "102", "group_id": "01", "tname": "สารสิน บุพพานนท์", "nickname": "อาร์ต", "photo": "102.png"}],
+  "0935839783": [{"dir": "ndc57", "cid": "7560", "group_id": "05", "tname": "นันทพร ดำรงพงศ์", "nickname": "เดียร์", "photo": "7560.png"}],
+  "0939366635": [{"dir": "ndc57", "cid": "7647", "group_id": "07", "tname": "วิบูลย์ ตวงสิทธิสมบัติ", "nickname": "เบน", "photo": "7647.png"}],
+  "0939569151": [{"dir": "ndc57", "cid": "7546", "group_id": "01", "tname": "ธราธร รัตนเนนย์", "nickname": "เจี๊ยบ", "photo": "7546.png"}],
+  "0945245235": [{"dir": "ndc57", "cid": "7531", "group_id": "07", "tname": "เดชอุดม นิชรัตน์", "nickname": "แปน", "photo": "7531.png"}],
+  "0946165535": [{"dir": "ndc57", "cid": "7607", "group_id": "01", "tname": "พันธ์นิดา ธูปะเตมีย์", "nickname": "ปุ้ย", "photo": "7607.png"}],
+  "0946459261": [{"dir": "ndc57", "cid": "7622", "group_id": "02", "tname": "ภุชงค์ บุญคณาสันต์", "nickname": "กุ้ง", "photo": "7622.png"}],
+  "0947893939": [{"dir": "ndc57", "cid": "7535", "group_id": "08", "tname": "ทวีศักดิ์ ธนเดโชพล", "nickname": "ไห", "photo": "7535.png"}],
+  "0948255555": [{"dir": "abc7", "cid": "35", "group_id": "10", "tname": "ธารธร อักษรานุวัตร", "nickname": "แบงค์", "photo": "35.png"}],
+  "0953652701": [{"dir": "ndc57", "cid": "7676", "group_id": "01", "tname": "สมควร ทองนาค", "nickname": "ใหญ่", "photo": "7676.png"}],
+  "0954295665": [{"dir": "ndc57", "cid": "7736", "group_id": "09", "tname": "องอาจ ประภากมล", "nickname": "เคี้ยง", "photo": "7736.png"}],
+  "0954465445": [{"dir": "abc7", "cid": "82", "group_id": "02", "tname": "วรรณ์มงคล ศิลาประเสริฐ", "nickname": "บอนด์", "photo": "82.png"}],
+  "0955365593": [{"dir": "abc7", "cid": "45", "group_id": "07", "tname": "เนตรศจี เตชานุบาล", "nickname": "กระต่าย", "photo": "45.png"}],
+  "0955980000": [{"dir": "abc7", "cid": "90", "group_id": "03", "tname": "ศิริกุล มังกรกนก", "nickname": "กุล", "photo": "90.png"}],
+  "0956365541": [{"dir": "abc7", "cid": "80", "group_id": "09", "tname": "วทิตา ชูชัยศรี", "nickname": "เดียร์", "photo": "80.png"}],
+  "0956426555": [{"dir": "abc7", "cid": "31", "group_id": "08", "tname": "ธนพันธ์ วงศ์ชินศรี", "nickname": "ต้น", "photo": "31.png"}],
+  "0957879365": [{"dir": "ndc57", "cid": "7506", "group_id": "09", "tname": "ชนินทร์ ชะโยชัยชนะ", "nickname": "นิน", "photo": "7506.png"}],
+  "0959956363": [{"dir": "ndc57", "cid": "7747", "group_id": "08", "tname": "อภิรัชต์ คงสมพงษ์", "nickname": "แดง", "photo": "7747.png"}],
+  "0961935646": [{"dir": "abc7", "cid": "13", "group_id": "09", "tname": "ฉัตรปวีณ์ รักอริยะพงศ์", "nickname": "Cee", "photo": "13.png"}],
+  "0962453656": [{"dir": "abc7", "cid": "65", "group_id": "10", "tname": "พิมพ์พริมา พิริยะเมธา", "nickname": "ด๊อยช์", "photo": "65.png"}],
+  "0962969595": [{"dir": "ndc57", "cid": "7526", "group_id": "03", "tname": "ณัฐพร เหลืองสุวรรณ", "nickname": "อ้อ", "photo": "7526.png"}],
+  "0963103810": [{"dir": "ndc57", "cid": "7760", "group_id": "04", "tname": "Datuk Hj Romlee Bin Yahaya", "nickname": null, "photo": "7760.png"}],
+  "0968534992": [{"dir": "ndc57", "cid": "7475", "group_id": "04", "tname": "กฤติกร รัสมิภูตานนท์", "nickname": "อู๊ด", "photo": "7475.png"}],
+  "0971982559": [{"dir": "ndc57", "cid": "7626", "group_id": "02", "tname": "มานิตย์ วรรณวานิช", "nickname": "นิตย์", "photo": "7626.png"}],
+  "0972574554": [{"dir": "ndc57", "cid": "7685", "group_id": "02", "tname": "สมัย โชติสกุล", "nickname": "หมัย", "photo": "7685.png"}],
+  "0979356475": [{"dir": "ndc57", "cid": "7641", "group_id": "02", "tname": "วิจิตต์ศรี สงวนวงศ์", "nickname": "เป็ด", "photo": "7641.png"}],
+  "0981536395": [{"dir": "ndc57", "cid": "7677", "group_id": "01", "tname": "สมชาย เพ็งกรูด", "nickname": "ตุ๋ย", "photo": "7677.png"}],
+  "0982803161": [{"dir": "ndc57", "cid": "7646", "group_id": "08", "tname": "วินัย วิรัชกุล", "nickname": "เหน่ง", "photo": "7646.png"}],
+  "0982989899": [{"dir": "ndc57", "cid": "7742", "group_id": "03", "tname": "อนุพร อรุณรัตน์", "nickname": "ปื๊ด", "photo": "7742.png"}],
+  "0984465955": [{"dir": "ndc57", "cid": "7517", "group_id": "10", "tname": "ชาตรี เรืองพัฒนา", "nickname": "หมูอุดร", "photo": "7517.png"}],
+  "0985329698": [{"dir": "ndc57", "cid": "7574", "group_id": "01", "tname": "บุญส่ง จำปาโพธิ์", "nickname": "ส่ง", "photo": "7574.png"}],
+  "0994862565": [{"dir": "ndc57", "cid": "7710", "group_id": "09", "tname": "สุทธินันท์ หัตถวงษ์", "nickname": "ต๋อม", "photo": "7710.png"}],
+  "0995459635": [{"dir": "ndc57", "cid": "7571", "group_id": "04", "tname": "บัณฑิตย์ จันทโรจวงศ์", "nickname": "ปุ๋ม", "photo": "7571.png"}],
+};
+
+        // === SESSION MANAGEMENT ===
+        function saveSession(phone, userData) {
+            const session = {
+                phone: phone,
+                user: userData,
+                timestamp: Date.now()
+            };
+            sessionStorage.setItem('backoffice_user', JSON.stringify(session));
+        }
+
+        function getSession() {
+            const data = sessionStorage.getItem('backoffice_user');
+            return data ? JSON.parse(data) : null;
+        }
+
+        function clearSession() {
+            sessionStorage.removeItem('backoffice_user');
+        }
+
+        // === PHONE NORMALIZATION ===
+        function normalizePhone(phone) {
+            return phone.replace(/\D/g, '');
+        }
+
+        // === LOGIN HANDLER ===
+        function handleLogin() {
+            const phoneInput = document.getElementById('phoneInput');
+            const phone = normalizePhone(phoneInput.value);
+            const errorDiv = document.getElementById('errorMessage');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Clear previous error
+            errorDiv.classList.remove('show');
+            errorDiv.textContent = '';
+
+            // Validation
+            if (!phone || phone.length < 9) {
+                errorDiv.textContent = 'กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง';
+                errorDiv.classList.add('show');
+                phoneInput.focus();
+                return;
+            }
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+
+            // Simulate network delay
+            setTimeout(() => {
+                const userData = PHONE_INDEX[phone];
+
+                if (!userData || userData.length === 0) {
+                    errorDiv.textContent = 'ไม่พบหมายเลขโทรศัพท์นี้ในระบบ';
+                    errorDiv.classList.add('show');
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                    phoneInput.focus();
+                    return;
+                }
+
+                // Save session and show menu
+                saveSession(phone, userData);
+                showMenuState(userData);
+
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+            }, 600);
+        }
+
+        // === SHOW MENU STATE ===
+        function showMenuState(userData) {
+            const loginState = document.getElementById('loginState');
+            const menuState = document.getElementById('menuState');
+
+            // Update user info
+            const user = userData[0];
+            document.getElementById('userName').textContent = user.tname;
+            document.getElementById('userNickname').textContent = 'ชื่อเล่น: ' + user.nickname;
+
+            // Load user photo if exists
+            const photoDiv = document.getElementById('userPhoto');
+            if (user.photo) {
+                const img = document.createElement('img');
+                img.src = `../photos/${user.photo}`;
+                img.onerror = () => {
+                    photoDiv.textContent = user.nickname.charAt(0).toUpperCase();
+                };
+                photoDiv.innerHTML = '';
+                photoDiv.appendChild(img);
+            } else {
+                photoDiv.textContent = user.nickname.charAt(0).toUpperCase();
+            }
+
+            // Build directory cards
+            const optionsDiv = document.getElementById('directoryOptions');
+            optionsDiv.innerHTML = '';
+
+            // Group userData by directory
+            const byDir = {};
+            userData.forEach(item => {
+                if (!byDir[item.dir]) byDir[item.dir] = [];
+                byDir[item.dir].push(item);
+            });
+
+            // Add ABC7 card if user exists
+            if (byDir.abc7) {
+                const item = byDir.abc7[0];
+                const isAdmin = item.group_id === 'all';
+                const groupName = isAdmin ? 'ทั้งหมด (Admin)' : (ABC7_GROUPS.find(g => g.id === item.group_id)?.name || item.group_id);
+                const card = document.createElement('div');
+                card.className = 'directory-card abc7';
+                card.innerHTML = `
+                    <div class="directory-name">ABC7 Directory</div>
+                    <div class="directory-group">${isAdmin ? 'Admin - ดูได้ทุกกลุ่ม' : 'กลุ่ม: ' + groupName}</div>
+                `;
+                card.onclick = () => redirectToDirectory('abc7', item.group_id);
+                optionsDiv.appendChild(card);
+            }
+
+            // Add NDC57 card if user exists
+            if (byDir.ndc57) {
+                const item = byDir.ndc57[0];
+                const isAdmin = item.group_id === 'all';
+                const groupName = isAdmin ? 'ทั้งหมด (Admin)' : (NDC57_GROUPS.find(g => g.id === item.group_id)?.name || item.group_id);
+                const card = document.createElement('div');
+                card.className = 'directory-card ndc57';
+                card.innerHTML = `
+                    <div class="directory-name">NDC57 Directory</div>
+                    <div class="directory-group">${isAdmin ? 'Admin - ดูได้ทุกกลุ่ม' : 'กลุ่ม: ' + groupName}</div>
+                `;
+                card.onclick = () => redirectToDirectory('ndc57', item.group_id);
+                optionsDiv.appendChild(card);
+            }
+
+            // Transition to menu
+            loginState.classList.add('hidden');
+            menuState.classList.remove('hidden');
+        }
+
+        // === REDIRECT HANDLER ===
+        function redirectToDirectory(dir, groupId) {
+            // Update session with selected directory info
+            const session = getSession();
+            if (session) {
+                const dirMatch = session.user.find(u => u.dir === dir);
+                session.selectedDir = dir;
+                session.nickname = dirMatch?.nickname || session.user[0]?.nickname || 'User';
+                session.matches = session.user.filter(u => u.dir === dir);
+                sessionStorage.setItem('backoffice_user', JSON.stringify(session));
+            }
+            const redirectUrl = `${dir}.html?group=${groupId}`;
+            window.location.href = redirectUrl;
+        }
+
+        // === LOGOUT HANDLER ===
+        function handleLogout() {
+            clearSession();
+            const loginState = document.getElementById('loginState');
+            const menuState = document.getElementById('menuState');
+            const phoneInput = document.getElementById('phoneInput');
+
+            // Clear input
+            phoneInput.value = '';
+            document.getElementById('errorMessage').classList.remove('show');
+
+            // Transition back to login
+            menuState.classList.add('hidden');
+            loginState.classList.remove('hidden');
+
+            // Focus phone input
+            setTimeout(() => phoneInput.focus(), 300);
+        }
+
+        // === INITIALIZATION ===
+        document.addEventListener('DOMContentLoaded', function() {
+            const session = getSession();
+            const phoneInput = document.getElementById('phoneInput');
+
+            if (session) {
+                // User already logged in
+                showMenuState(session.user);
+            } else {
+                // Focus login input
+                phoneInput.focus();
+            }
+
+            // Handle Enter key
+            phoneInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleLogin();
+                }
+            });
+
+            // Format phone input as user types
+            phoneInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+
+                // Format as Thai phone: XXX-XXX-XXXX
+                if (value.length > 0) {
+                    if (value.length <= 3) {
+                        e.target.value = value;
+                    } else if (value.length <= 6) {
+                        e.target.value = value.slice(0, 3) + '-' + value.slice(3);
+                    } else {
+                        e.target.value = value.slice(0, 3) + '-' + value.slice(3, 6) + '-' + value.slice(6, 10);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
