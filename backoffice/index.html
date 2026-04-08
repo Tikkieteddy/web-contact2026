@@ -48,10 +48,30 @@ body{font-family:'Segoe UI',-apple-system,sans-serif;background:linear-gradient(
   <div class="icon">&#x1F4DE;</div>
   <h1>Contact Directory</h1>
   <p>Backoffice System</p>
-  <label>&#x0E40;&#x0E1A;&#x0E2D;&#x0E23;&#x0E4C;&#x0E42;&#x0E17;&#x0E23;&#x0E28;&#x0E31;&#x0E1E;&#x0E17;&#x0E4C;</label>
-  <input type="tel" id="phoneInput" placeholder="&#x0E40;&#x0E0A;&#x0E48;&#x0E19; 094-445-6396" autofocus>
+
+  <!-- Tab toggle -->
+  <div style="display:flex;gap:0;margin-bottom:24px;border-radius:8px;overflow:hidden;border:2px solid #1b3a5c">
+    <button id="tabPhone" onclick="switchLoginTab('phone')" style="flex:1;padding:10px;border:none;cursor:pointer;font-size:14px;font-weight:600;background:#1b3a5c;color:#fff;transition:all .2s">กรอกเบอร์โทร</button>
+    <button id="tabUser" onclick="switchLoginTab('user')" style="flex:1;padding:10px;border:none;cursor:pointer;font-size:14px;font-weight:600;background:#f0f0f0;color:#666;transition:all .2s">Username / Password</button>
+  </div>
+
+  <!-- Phone login (default) -->
+  <div id="phoneLoginForm">
+    <label>เบอร์โทรศัพท์</label>
+    <input type="tel" id="phoneInput" placeholder="เช่น 094-445-6396" autofocus>
+    <button class="btn" onclick="doLogin()">เข้าสู่ระบบ</button>
+  </div>
+
+  <!-- Username/Password login -->
+  <div id="userLoginForm" style="display:none">
+    <label>Username (เบอร์โทรศัพท์)</label>
+    <input type="tel" id="usernameInput" placeholder="เช่น 0813416809" style="margin-bottom:12px">
+    <label>Password (เบอร์โทรศัพท์)</label>
+    <input type="password" id="passwordInput" placeholder="กรอกเบอร์โทรศัพท์อีกครั้ง">
+    <button class="btn" onclick="doLoginUserPass()">เข้าสู่ระบบ</button>
+  </div>
+
   <div class="error" id="errorMsg"></div>
-  <button class="btn" onclick="doLogin()">&#x0E40;&#x0E02;&#x0E49;&#x0E32;&#x0E2A;&#x0E39;&#x0E48;&#x0E23;&#x0E30;&#x0E1A;&#x0E1A;</button>
 </div>
 
 <!-- MENU PAGE -->
@@ -528,6 +548,29 @@ const PHONE_INDEX = {
 const ABC7_GROUPS = [{"id":"01","name":"Berlin"},{"id":"02","name":"London"},{"id":"03","name":"Moscow"},{"id":"04","name":"New York"},{"id":"05","name":"Paris"},{"id":"06","name":"Rome"},{"id":"07","name":"Seoul"},{"id":"08","name":"Shanghai"},{"id":"09","name":"Sydney"},{"id":"10","name":"Tokyo"}];
 const NDC57_GROUPS = [{"id":"01","name":"\u0e01\u0e27\u0e32\u0e07"},{"id":"02","name":"\u0e44\u0e01\u0e48\u0e1f\u0e49\u0e32"},{"id":"03","name":"\u0e0a\u0e49\u0e32\u0e07"},{"id":"04","name":"\u0e19\u0e01\u0e40\u0e04\u0e49\u0e32\u0e41\u0e21\u0e27"},{"id":"05","name":"\u0e19\u0e01\u0e22\u0e39\u0e07"},{"id":"06","name":"\u0e19\u0e01\u0e2b\u0e31\u0e27\u0e02\u0e27\u0e32\u0e19"},{"id":"07","name":"\u0e27\u0e31\u0e27"},{"id":"08","name":"\u0e2a\u0e34\u0e07\u0e42\u0e15"},{"id":"09","name":"\u0e40\u0e2a\u0e37\u0e2d"},{"id":"10","name":"\u0e40\u0e2b\u0e22\u0e35\u0e48\u0e22\u0e27"},{"id":"11","name":"\u0e04\u0e13\u0e32\u0e08\u0e32\u0e23\u0e22\u0e4c"}];
 
+// Tab switching
+function switchLoginTab(tab) {
+  var err = document.getElementById('errorMsg');
+  err.style.display = 'none';
+  if (tab === 'phone') {
+    document.getElementById('phoneLoginForm').style.display = 'block';
+    document.getElementById('userLoginForm').style.display = 'none';
+    document.getElementById('tabPhone').style.background = '#1b3a5c';
+    document.getElementById('tabPhone').style.color = '#fff';
+    document.getElementById('tabUser').style.background = '#f0f0f0';
+    document.getElementById('tabUser').style.color = '#666';
+    document.getElementById('phoneInput').focus();
+  } else {
+    document.getElementById('phoneLoginForm').style.display = 'none';
+    document.getElementById('userLoginForm').style.display = 'block';
+    document.getElementById('tabUser').style.background = '#1b3a5c';
+    document.getElementById('tabUser').style.color = '#fff';
+    document.getElementById('tabPhone').style.background = '#f0f0f0';
+    document.getElementById('tabPhone').style.color = '#666';
+    document.getElementById('usernameInput').focus();
+  }
+}
+
 // Format phone as user types
 document.getElementById('phoneInput').addEventListener('input', function(e) {
   let v = e.target.value.replace(/\D/g, '');
@@ -537,32 +580,93 @@ document.getElementById('phoneInput').addEventListener('input', function(e) {
   else e.target.value = v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);
 });
 
-// Enter key
+// Enter key for phone login
 document.getElementById('phoneInput').addEventListener('keypress', function(e) {
   if (e.key === 'Enter') doLogin();
 });
 
+// Enter key for username/password login
+document.getElementById('usernameInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') document.getElementById('passwordInput').focus();
+});
+document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') doLoginUserPass();
+});
+
+// Phone-only login (existing)
 function doLogin() {
   var phone = document.getElementById('phoneInput').value.replace(/\D/g, '');
   var err = document.getElementById('errorMsg');
   err.style.display = 'none';
 
   if (!phone || phone.length < 9) {
-    err.textContent = '\u0e01\u0e23\u0e38\u0e13\u0e32\u0e01\u0e23\u0e2d\u0e01\u0e40\u0e1a\u0e2d\u0e23\u0e4c\u0e42\u0e17\u0e23\u0e28\u0e31\u0e1e\u0e17\u0e4c\u0e43\u0e2b\u0e49\u0e16\u0e39\u0e01\u0e15\u0e49\u0e2d\u0e07';
+    err.textContent = 'กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง';
     err.style.display = 'block';
     return;
   }
 
   var matches = PHONE_INDEX[phone];
   if (!matches || matches.length === 0) {
-    err.textContent = '\u0e44\u0e21\u0e48\u0e1e\u0e1a\u0e2b\u0e21\u0e32\u0e22\u0e40\u0e25\u0e02\u0e42\u0e17\u0e23\u0e28\u0e31\u0e1e\u0e17\u0e4c\u0e19\u0e35\u0e49\u0e43\u0e19\u0e23\u0e30\u0e1a\u0e1a';
+    err.textContent = 'ไม่พบหมายเลขโทรศัพท์นี้ในระบบ';
     err.style.display = 'block';
     return;
   }
 
-  // Save session
   sessionStorage.setItem('backoffice_user', JSON.stringify({phone: phone, user: matches}));
   showMenu(matches);
+}
+
+// Username + Password login (new)
+function doLoginUserPass() {
+  var username = document.getElementById('usernameInput').value.replace(/\D/g, '');
+  var password = document.getElementById('passwordInput').value.replace(/\D/g, '');
+  var err = document.getElementById('errorMsg');
+  err.style.display = 'none';
+
+  if (!username || username.length < 9) {
+    err.textContent = 'กรุณากรอก Username (เบอร์โทรศัพท์)';
+    err.style.display = 'block';
+    return;
+  }
+
+  if (!password) {
+    err.textContent = 'กรุณากรอก Password';
+    err.style.display = 'block';
+    return;
+  }
+
+  if (username !== password) {
+    err.textContent = 'Username หรือ Password ไม่ถูกต้อง';
+    err.style.display = 'block';
+    return;
+  }
+
+  // Check admin
+  if (ADMIN_PHONES[username]) {
+    var adminMatch = [{dir:'abc7',cid:'admin',group_id:'all',tname:'Admin',nickname:'Admin',photo:''},
+                      {dir:'ndc57',cid:'admin',group_id:'all',tname:'Admin',nickname:'Admin',photo:''}];
+    sessionStorage.setItem('backoffice_user', JSON.stringify({phone: username, user: adminMatch}));
+    showMenu(adminMatch);
+    return;
+  }
+
+  var matches = PHONE_INDEX[username];
+  if (!matches || matches.length === 0) {
+    err.textContent = 'Username หรือ Password ไม่ถูกต้อง';
+    err.style.display = 'block';
+    return;
+  }
+
+  sessionStorage.setItem('backoffice_user', JSON.stringify({phone: username, user: matches}));
+
+  // Auto redirect to directory page based on user's group
+  var user = matches[0];
+  var session = JSON.parse(sessionStorage.getItem('backoffice_user'));
+  session.selectedDir = user.dir;
+  session.nickname = user.nickname;
+  session.matches = matches.filter(function(u){return u.dir===user.dir});
+  sessionStorage.setItem('backoffice_user', JSON.stringify(session));
+  window.location.href = user.dir === 'abc7' ? 'abc7.html?group=' + user.group_id : 'ndc57.html?group=' + user.group_id;
 }
 
 function showMenu(matches) {
