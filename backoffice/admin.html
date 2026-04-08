@@ -587,7 +587,12 @@
                 </div>
 
                 <div class="search-box">
-                    <input type="text" id="phoneSearchInput" placeholder="ค้นหาเบอรโทรศัพท์...">
+                    <select id="phoneFilterDir" onchange="searchPhones()" style="width:160px;padding:12px;border:1px solid #ddd;border-radius:4px;font-size:14px;">
+                        <option value="">ทั้งหมด</option>
+                        <option value="abc7">ABC7</option>
+                        <option value="ndc57">NDC57</option>
+                    </select>
+                    <input type="text" id="phoneSearchInput" placeholder="ค้นหาเบอร์โทรศัพท์ / ชื่อ...">
                     <button onclick="searchPhones()">ค้นหา</button>
                 </div>
 
@@ -1065,12 +1070,55 @@
         return '../image_ndc57_abc7/' + d + '/' + photo;
     }
 
+    let phoneSortField = 'tname';
+    let phoneSortDir = 'asc';
+    let currentFilteredPhones = [];
+
+    function sortPhones(field) {
+        if (phoneSortField === field) {
+            phoneSortDir = phoneSortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+            phoneSortField = field;
+            phoneSortDir = 'asc';
+        }
+        const list = currentFilteredPhones.length > 0 ? currentFilteredPhones : allPhones;
+        const sorted = [...list].sort((a, b) => {
+            let va = '', vb = '';
+            if (field === 'name') {
+                va = (a.tname || a.nickname || '').toLowerCase();
+                vb = (b.tname || b.nickname || '').toLowerCase();
+            } else if (field === 'dir') {
+                va = a.dir || (a.directory === 'contacts_abc7' ? 'abc7' : 'ndc57');
+                vb = b.dir || (b.directory === 'contacts_abc7' ? 'abc7' : 'ndc57');
+            } else if (field === 'group') {
+                const dkA = a.dir || (a.directory === 'contacts_abc7' ? 'abc7' : 'ndc57');
+                const dkB = b.dir || (b.directory === 'contacts_abc7' ? 'abc7' : 'ndc57');
+                va = getGroupName(dkA, a.group_id || a.group);
+                vb = getGroupName(dkB, b.group_id || b.group);
+            } else {
+                va = (a[field] || '').toLowerCase();
+                vb = (b[field] || '').toLowerCase();
+            }
+            if (va < vb) return phoneSortDir === 'asc' ? -1 : 1;
+            if (va > vb) return phoneSortDir === 'asc' ? 1 : -1;
+            return 0;
+        });
+        renderPhonesTable(sorted);
+    }
+    window.sortPhones = sortPhones;
+
     function renderPhonesTable(phones) {
         const container = document.getElementById('phonesTableContainer');
+        currentFilteredPhones = phones;
 
         if (phones.length === 0) {
-            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📱</div><p>ไม่มีข้อมูลเบอรโทรศัพท์</p></div>';
+            container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📱</div><p>ไม่มีข้อมูลเบอร์โทรศัพท์</p></div>';
             return;
+        }
+
+        function phClass(field) {
+            if (phoneSortField === field) return `sortable ${phoneSortDir}`;
+            return 'sortable';
         }
 
         let html = `
@@ -1078,10 +1126,10 @@
                 <thead>
                     <tr>
                         <th style="width:60px">รูป</th>
-                        <th>ชื่อ</th>
-                        <th>เบอร์โทรศัพท์</th>
-                        <th>หมวดหมู่</th>
-                        <th>หมวดกลุ่ม</th>
+                        <th class="${phClass('name')}" onclick="sortPhones('name')">ชื่อ</th>
+                        <th class="${phClass('phone')}" onclick="sortPhones('phone')">เบอร์โทรศัพท์</th>
+                        <th class="${phClass('dir')}" onclick="sortPhones('dir')">หมวดหมู่</th>
+                        <th class="${phClass('group')}" onclick="sortPhones('group')">หมวดกลุ่ม</th>
                         <th>การดำเนินการ</th>
                     </tr>
                 </thead>
@@ -1118,9 +1166,15 @@
 
     window.searchPhones = function() {
         const search = document.getElementById('phoneSearchInput').value.toLowerCase();
-        const filtered = allPhones.filter(phone =>
-            phone.phone.toLowerCase().includes(search)
-        );
+        const dirFilter = document.getElementById('phoneFilterDir').value;
+        const filtered = allPhones.filter(phone => {
+            const phoneDir = phone.dir || (phone.directory === 'contacts_abc7' ? 'abc7' : 'ndc57');
+            if (dirFilter && phoneDir !== dirFilter) return false;
+            if (!search) return true;
+            return (phone.phone && phone.phone.toLowerCase().includes(search)) ||
+                   (phone.tname && phone.tname.toLowerCase().includes(search)) ||
+                   (phone.nickname && phone.nickname.toLowerCase().includes(search));
+        });
         renderPhonesTable(filtered);
     };
 
