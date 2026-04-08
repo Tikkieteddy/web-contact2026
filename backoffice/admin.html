@@ -578,8 +578,8 @@
                     <label>เลือกหมวดหมู่ (Directory)</label>
                     <select id="directorySelect" onchange="loadContactsForDirectory()">
                         <option value="">-- เลือกหมวดหมู่ --</option>
-                        <option value="contacts_abc7">ABC7 - International</option>
-                        <option value="contacts_ndc57">NDC57 - สัตว์</option>
+                        <option value="contacts_abc7">ABC7</option>
+                        <option value="contacts_ndc57">NDC57</option>
                     </select>
                 </div>
 
@@ -607,8 +607,8 @@
                         <label>เลือกหมวดหมู่ (Directory)*</label>
                         <select id="addDirectorySelect" onchange="updateGroupOptions()">
                             <option value="">-- เลือกหมวดหมู่ --</option>
-                            <option value="contacts_abc7">ABC7 - International</option>
-                            <option value="contacts_ndc57">NDC57 - สัตว์</option>
+                            <option value="contacts_abc7">ABC7</option>
+                            <option value="contacts_ndc57">NDC57</option>
                         </select>
                     </div>
 
@@ -710,8 +710,8 @@
                     <label>เลือกหมวดหมู่ (Directory)</label>
                     <select id="deleteDirectorySelect" onchange="loadContactsForDelete()">
                         <option value="">-- เลือกหมวดหมู่ --</option>
-                        <option value="contacts_abc7">ABC7 - International</option>
-                        <option value="contacts_ndc57">NDC57 - สัตว์</option>
+                        <option value="contacts_abc7">ABC7</option>
+                        <option value="contacts_ndc57">NDC57</option>
                     </select>
                 </div>
 
@@ -747,8 +747,8 @@
                 <label>เลือกหมวดหมู่ (Directory)*</label>
                 <select id="newPhoneDirectory">
                     <option value="">-- เลือกหมวดหมู่ --</option>
-                    <option value="contacts_abc7">ABC7 - International</option>
-                    <option value="contacts_ndc57">NDC57 - สัตว์</option>
+                    <option value="contacts_abc7">ABC7</option>
+                    <option value="contacts_ndc57">NDC57</option>
                 </select>
             </div>
             <div class="form-group">
@@ -1022,6 +1022,18 @@
         }
     }
 
+    function getGroupName(dir, groupId) {
+        const groups = (dir === 'abc7' || dir === 'contacts_abc7') ? ABC7_GROUPS : NDC57_GROUPS;
+        const g = groups.find(g => g.id === groupId);
+        return g ? g.name : (groupId || '-');
+    }
+
+    function getPhotoUrl(dir, photo) {
+        if (!photo) return '';
+        const d = (dir === 'contacts_abc7') ? 'abc7' : (dir === 'contacts_ndc57') ? 'ndc57' : dir;
+        return '../image_ndc57_abc7/' + d + '/' + photo;
+    }
+
     function renderPhonesTable(phones) {
         const container = document.getElementById('phonesTableContainer');
 
@@ -1034,7 +1046,9 @@
             <table>
                 <thead>
                     <tr>
-                        <th>เบอรโทรศัพท์</th>
+                        <th style="width:60px">รูป</th>
+                        <th>ชื่อ</th>
+                        <th>เบอร์โทรศัพท์</th>
                         <th>หมวดหมู่</th>
                         <th>หมวดกลุ่ม</th>
                         <th>การดำเนินการ</th>
@@ -1044,12 +1058,19 @@
         `;
 
         phones.forEach(phone => {
-            const dirName = phone.directory === 'contacts_abc7' ? 'ABC7' : 'NDC57';
+            const dirLabel = (phone.dir === 'abc7' || phone.directory === 'contacts_abc7') ? 'ABC7' : 'NDC57';
+            const dirKey = phone.dir || (phone.directory === 'contacts_abc7' ? 'abc7' : 'ndc57');
+            const photoSrc = getPhotoUrl(dirKey, phone.photo);
+            const photoHtml = photoSrc ? `<img src="${photoSrc}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">` : '<span style="display:inline-block;width:40px;height:40px;border-radius:50%;background:#e0e0e0;text-align:center;line-height:40px;font-size:18px;">👤</span>';
+            const groupName = getGroupName(dirKey, phone.group_id || phone.group);
+            const displayName = phone.tname || phone.nickname || '-';
             html += `
                 <tr>
+                    <td>${photoHtml}</td>
+                    <td>${displayName}</td>
                     <td>${phone.phone}</td>
-                    <td><span class="badge">${dirName}</span></td>
-                    <td>${phone.group || '-'}</td>
+                    <td><span class="badge">${dirLabel}</span></td>
+                    <td>${groupName}</td>
                     <td>
                         <div class="action-buttons">
                             <button class="btn btn-secondary btn-sm" onclick="editPhone('${phone.id}')">แก้ไข</button>
@@ -1221,21 +1242,25 @@
 
     function renderContactsTable(contacts) {
         const container = document.getElementById('contactsTableContainer');
+        const directory = document.getElementById('directorySelect').value;
 
         if (contacts.length === 0) {
             container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>ไม่มีข้อมูล Contact</p></div>';
             return;
         }
 
+        const dirKey = directory === 'contacts_abc7' ? 'abc7' : 'ndc57';
+
         let html = `
             <table>
                 <thead>
                     <tr>
+                        <th style="width:60px">รูป</th>
+                        <th>หมวดกลุ่ม</th>
                         <th>ชื่อไทย</th>
                         <th>ชื่ออังกฤษ</th>
                         <th>ตำแหน่ง</th>
                         <th>มือถือ</th>
-                        <th>อีเมล</th>
                         <th>การดำเนินการ</th>
                     </tr>
                 </thead>
@@ -1243,13 +1268,17 @@
         `;
 
         contacts.forEach(contact => {
+            const photoSrc = getPhotoUrl(dirKey, contact.photo);
+            const photoHtml = photoSrc ? `<img src="${photoSrc}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">` : '<span style="display:inline-block;width:40px;height:40px;border-radius:50%;background:#e0e0e0;text-align:center;line-height:40px;font-size:18px;">👤</span>';
+            const groupName = getGroupName(dirKey, contact.group_id);
             html += `
                 <tr>
+                    <td>${photoHtml}</td>
+                    <td>${groupName}</td>
                     <td>${contact.tname || '-'}</td>
                     <td>${contact.ename || '-'}</td>
                     <td>${contact.position || '-'}</td>
                     <td>${contact.mobile1 || '-'}</td>
-                    <td>${contact.email || '-'}</td>
                     <td>
                         <div class="action-buttons">
                             <button class="btn btn-secondary btn-sm" onclick="openEditContactModal('${contact.id}')">แก้ไข</button>
