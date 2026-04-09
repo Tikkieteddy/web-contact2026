@@ -1,26 +1,26 @@
 {
-  "id": "/NDC57_Contact.html",
+  "id": "ndc57-directory",
   "name": "NDC57 Contact Directory",
   "short_name": "NDC57",
   "description": "NDC57 Executive Contact Network",
   "start_url": "/NDC57_Contact.html",
-  "scope": "/NDC57_Contact.html",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#1b3a5c",
-  "theme_color": "#1b3a5c",
+  "background_color": "#ffffff",
+  "theme_color": "#9a7b4f",
   "orientation": "any",
   "icons": [
     {
       "src": "/icon_ndc57_192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/icon_ndc57_512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }

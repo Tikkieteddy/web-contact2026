@@ -375,44 +375,33 @@ checkFrontendAuth();
 let deferredPrompt = null;
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw_ndc57.js', {scope: '/NDC57_Contact.html'}).catch(() => {});
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
-  // Only show if user is logged in (not behind login overlay)
   if (document.getElementById('loginOverlay').style.display === 'none') {
     document.getElementById('installBtnHeader').style.display = '';
     document.getElementById('installBanner').style.display = 'block';
   }
 });
 
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  document.getElementById('installBtnHeader').style.display = 'none';
+  document.getElementById('installBanner').style.display = 'none';
+});
+
 function triggerInstall() {
   if (deferredPrompt) {
     deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(result => {
+    deferredPrompt.userChoice.then(() => {
       deferredPrompt = null;
       document.getElementById('installBtnHeader').style.display = 'none';
       document.getElementById('installBanner').style.display = 'none';
     });
-  } else {
-    showManualInstall();
   }
-}
-
-function showManualInstall() {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  const isMac = /Macintosh/.test(navigator.userAgent);
-  let msg = '';
-  if (isIOS) {
-    msg = 'วิธี Add to Home Screen บน iOS:\n\n1. กดปุ่ม Share (กล่องลูกศรขึ้น ⬆) ด้านล่างของ Safari\n2. เลื่อนลงแล้วกด "Add to Home Screen"\n3. กด "Add" มุมขวาบน';
-  } else if (isMac) {
-    msg = 'วิธี Add to Home Screen:\n\nSafari: กดเมนู File > Add to Dock\nChrome: กดจุด 3 จุดมุมขวาบน > Save and Share > Install App';
-  } else {
-    msg = 'วิธี Add to Home Screen:\n\nกดจุด 3 จุด (⋮) มุมขวาบนของ Browser\nแล้วเลือก "Add to Home screen" หรือ "Install App"';
-  }
-  alert(msg);
 }
 
 function closeInstallBanner() {
@@ -420,28 +409,20 @@ function closeInstallBanner() {
   sessionStorage.setItem('ndc57_banner_closed', '1');
 }
 
-// Show install prompt after login for iOS/all platforms
 function showInstallPromptAfterLogin() {
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-  if (isStandalone) return; // Already installed
-  if (sessionStorage.getItem('ndc57_banner_closed')) return; // User dismissed
-
-  // For Chrome/Edge (has beforeinstallprompt)
+  if (isStandalone) return;
+  if (sessionStorage.getItem('ndc57_banner_closed')) return;
   if (deferredPrompt) {
     document.getElementById('installBtnHeader').style.display = '';
     document.getElementById('installBanner').style.display = 'block';
-    return;
   }
-
-  // For iOS Safari / other browsers without beforeinstallprompt
-  document.getElementById('installBtnHeader').style.display = '';
-  document.getElementById('installBanner').style.display = 'block';
 }
 </script>
 <!-- Install Banner -->
 <div class="install-banner" id="installBanner">
-  <p>เพิ่ม NDC57 Directory ลงหน้าจอหลักเพื่อเข้าถึงได้เร็วขึ้น</p>
-  <button class="ib-install" onclick="triggerInstall()">Add to Home Screen</button>
+  <p>เพิ่ม NDC57 Directory ลงหน้าจอหลัก</p>
+  <button class="ib-install" onclick="triggerInstall()">Install App</button>
   <button class="ib-close" onclick="closeInstallBanner()">ไม่ใช่ตอนนี้</button>
 </div>
 
