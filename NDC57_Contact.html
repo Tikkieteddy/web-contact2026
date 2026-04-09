@@ -373,11 +373,14 @@ checkFrontendAuth();
 
 // === PWA Install ===
 let deferredPrompt = null;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 
+// Android Chrome / Windows Chrome & Edge — native install
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
@@ -401,6 +404,8 @@ function triggerInstall() {
       document.getElementById('installBtnHeader').style.display = 'none';
       document.getElementById('installBanner').style.display = 'none';
     });
+  } else if (isIOS) {
+    alert('วิธี Add to Home Screen บน iOS:\n\n1. กดปุ่ม Share (กล่องลูกศรขึ้น) ด้านล่างของ Safari\n2. เลื่อนลงแล้วกด "Add to Home Screen"\n3. กด "Add" มุมขวาบน');
   }
 }
 
@@ -410,21 +415,31 @@ function closeInstallBanner() {
 }
 
 function showInstallPromptAfterLogin() {
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
   if (isStandalone) return;
   if (sessionStorage.getItem('ndc57_banner_closed')) return;
+
+  // Android / Windows — native prompt
   if (deferredPrompt) {
+    document.getElementById('installBtnHeader').style.display = '';
+    document.getElementById('installBanner').style.display = 'block';
+    return;
+  }
+
+  // iOS Safari — show install button (leads to guide)
+  if (isIOS) {
     document.getElementById('installBtnHeader').style.display = '';
     document.getElementById('installBanner').style.display = 'block';
   }
 }
 </script>
-<!-- Install Banner -->
+
+<!-- Install Banner (Android/Windows) -->
 <div class="install-banner" id="installBanner">
   <p>เพิ่ม NDC57 Directory ลงหน้าจอหลัก</p>
   <button class="ib-install" onclick="triggerInstall()">Install App</button>
   <button class="ib-close" onclick="closeInstallBanner()">ไม่ใช่ตอนนี้</button>
 </div>
+
 
 </body>
 </html>
