@@ -313,7 +313,8 @@ function doFrontendLogin() {
   document.getElementById('userWelcome').style.display = '';
   document.getElementById('logoutBtn').style.display = '';
 
-  // Auto filter to user's group
+  // Initialize app then auto filter to user's group
+  init();
   setFilter(user.group_id);
 }
 
