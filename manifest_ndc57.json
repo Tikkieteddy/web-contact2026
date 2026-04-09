@@ -4,7 +4,7 @@
   "short_name": "NDC57",
   "description": "NDC57 Executive Contact Network",
   "start_url": "/NDC57_Contact.html",
-  "scope": "/",
+  "scope": "/NDC57",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#9a7b4f",
