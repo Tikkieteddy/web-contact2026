@@ -80,27 +80,27 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   .filter-btn{padding:6px 14px;font-size:12px}
 }
 /* Login Overlay */
-.login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#1b3a5c 0%,#2c5aa0 100%);z-index:9999;display:flex;align-items:center;justify-content:center}
-.login-box{background:#fff;border-radius:16px;padding:40px 32px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
-.login-box h1{font-size:22px;color:#1b3a5c;margin-bottom:6px}
-.login-box p{font-size:13px;color:#888;margin-bottom:24px}
-.login-box .login-icon{width:70px;height:70px;background:linear-gradient(135deg,#1b3a5c,#2d5a8c);border-radius:14px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:34px;color:#fff}
-.login-box label{display:block;text-align:left;font-size:13px;color:#555;margin-bottom:6px;font-weight:600}
-.login-box input{width:100%;padding:14px 16px;border:2px solid #dde;border-radius:10px;font-size:16px;outline:none;margin-bottom:14px}
-.login-box input:focus{border-color:#1b3a5c}
-.login-box .login-btn{width:100%;padding:14px;background:#1b3a5c;color:#fff;border:none;border-radius:10px;font-size:16px;cursor:pointer;font-weight:600;margin-top:8px}
-.login-box .login-btn:hover{background:#2d5a8c}
-.login-box .login-error{color:#c33;background:#fee;padding:10px;border-radius:8px;margin-top:8px;font-size:13px;display:none}
+.login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#5c3d1b 0%,#9a7b4f 50%,#c4a265 100%);z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-box{background:#fffcf7;border-radius:16px;padding:40px 32px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(44,36,22,.35);text-align:center;border:1px solid #e8dcc8}
+.login-box h1{font-size:22px;color:#5c3d1b;margin-bottom:6px}
+.login-box p{font-size:13px;color:#7a6e5e;margin-bottom:24px}
+.login-box .login-icon{width:70px;height:70px;background:linear-gradient(135deg,#9a7b4f,#c4a265);border-radius:14px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:34px;color:#fff}
+.login-box label{display:block;text-align:left;font-size:13px;color:#5c4a2e;margin-bottom:6px;font-weight:600}
+.login-box input{width:100%;padding:14px 16px;border:2px solid #e8dcc8;border-radius:10px;font-size:16px;outline:none;margin-bottom:14px;background:#fff}
+.login-box input:focus{border-color:#9a7b4f;box-shadow:0 0 0 3px rgba(154,123,79,0.15)}
+.login-box .login-btn{width:100%;padding:14px;background:linear-gradient(135deg,#9a7b4f,#b8975e);color:#fff;border:none;border-radius:10px;font-size:16px;cursor:pointer;font-weight:600;margin-top:8px}
+.login-box .login-btn:hover{background:linear-gradient(135deg,#856a42,#9a7b4f)}
+.login-box .login-error{color:#8b3a2a;background:#fef0ec;padding:10px;border-radius:8px;margin-top:8px;font-size:13px;display:none;border:1px solid #e8c4bc}
 .logout-btn-header{padding:8px 18px;background:#dc2626;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600}
 .logout-btn-header:hover{background:#b91c1c}
 .user-welcome{font-size:13px;color:var(--text-secondary);font-weight:500}
 /* PWA Install */
 .install-btn{padding:8px 16px;background:#0d9488;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600;display:none;white-space:nowrap}
 .install-btn:hover{background:#0a7a6e}
-.install-banner{display:none;background:linear-gradient(135deg,#1b3a5c,#2c5aa0);color:#fff;padding:14px 20px;text-align:center;position:fixed;bottom:0;left:0;right:0;z-index:8888;box-shadow:0 -4px 20px rgba(0,0,0,.2)}
+.install-banner{display:none;background:linear-gradient(135deg,#5c3d1b,#9a7b4f);color:#fff;padding:14px 20px;text-align:center;position:fixed;bottom:0;left:0;right:0;z-index:8888;box-shadow:0 -4px 20px rgba(44,36,22,.25)}
 .install-banner p{margin:0 0 10px;font-size:14px}
 .install-banner button{padding:10px 24px;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;margin:0 6px}
-.install-banner .ib-install{background:#fff;color:#1b3a5c}
+.install-banner .ib-install{background:#fff;color:#5c3d1b}
 .install-banner .ib-close{background:rgba(255,255,255,.2);color:#fff}
 </style>
 </head>
@@ -367,7 +367,7 @@ checkFrontendAuth();
 let deferredPrompt = null;
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw_ndc57.js').catch(() => {});
+  navigator.serviceWorker.register('/sw_ndc57.js', {scope: '/NDC57_Contact.html'}).catch(() => {});
 }
 
 window.addEventListener('beforeinstallprompt', e => {

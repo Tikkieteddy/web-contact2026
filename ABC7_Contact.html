@@ -373,7 +373,7 @@ checkFrontendAuth();
 let deferredPrompt = null;
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw_abc7.js').catch(() => {});
+  navigator.serviceWorker.register('/sw_abc7.js', {scope: '/ABC7_Contact.html'}).catch(() => {});
 }
 
 window.addEventListener('beforeinstallprompt', e => {
