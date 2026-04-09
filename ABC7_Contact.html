@@ -331,6 +331,8 @@ function doFrontendLogin() {
   // Initialize app then auto filter to user's group
   init();
   setFilter(user.group_id);
+  // Show install prompt after login
+  setTimeout(showInstallPromptAfterLogin, 800);
 }
 
 function doFrontendLogout() {
@@ -351,6 +353,8 @@ function checkFrontendAuth() {
         document.getElementById('logoutBtn').style.display = '';
         init();
         setFilter(data.user.group_id);
+        // Show install prompt after session restore
+        setTimeout(showInstallPromptAfterLogin, 800);
         return;
       }
     } catch(e) {}
@@ -369,15 +373,17 @@ checkFrontendAuth();
 let deferredPrompt = null;
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').catch(() => {});
+  navigator.serviceWorker.register('/sw_abc7.js').catch(() => {});
 }
 
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
-  document.getElementById('installBtnHeader').style.display = '';
-  // Show bottom banner too
-  document.getElementById('installBanner').style.display = 'block';
+  // Only show if user is logged in (not behind login overlay)
+  if (document.getElementById('loginOverlay').style.display === 'none') {
+    document.getElementById('installBtnHeader').style.display = '';
+    document.getElementById('installBanner').style.display = 'block';
+  }
 });
 
 function triggerInstall() {
@@ -389,7 +395,6 @@ function triggerInstall() {
       document.getElementById('installBanner').style.display = 'none';
     });
   } else {
-    // Show manual instructions for iOS/browsers without beforeinstallprompt
     showManualInstall();
   }
 }
@@ -399,24 +404,36 @@ function showManualInstall() {
   const isMac = /Macintosh/.test(navigator.userAgent);
   let msg = '';
   if (isIOS) {
-    msg = 'iOS: กดปุ่ม Share (กล่องลูกศรขึ้น) ด้านล่าง\nแล้วเลือก "Add to Home Screen"';
+    msg = 'วิธี Add to Home Screen บน iOS:\n\n1. กดปุ่ม Share (กล่องลูกศรขึ้น ⬆) ด้านล่างของ Safari\n2. เลื่อนลงแล้วกด "Add to Home Screen"\n3. กด "Add" มุมขวาบน';
   } else if (isMac) {
-    msg = 'Mac Safari: กดเมนู File > Add to Dock\nChrome: กดจุด 3 จุดมุมขวาบน > Install App';
+    msg = 'วิธี Add to Home Screen:\n\nSafari: กดเมนู File > Add to Dock\nChrome: กดจุด 3 จุดมุมขวาบน > Save and Share > Install App';
   } else {
-    msg = 'กดจุด 3 จุด (⋮) มุมขวาบนของ Browser\nแล้วเลือก "Add to Home screen" หรือ "Install App"';
+    msg = 'วิธี Add to Home Screen:\n\nกดจุด 3 จุด (⋮) มุมขวาบนของ Browser\nแล้วเลือก "Add to Home screen" หรือ "Install App"';
   }
   alert(msg);
 }
 
 function closeInstallBanner() {
   document.getElementById('installBanner').style.display = 'none';
+  sessionStorage.setItem('abc7_banner_closed', '1');
 }
 
-// Show install button for iOS (no beforeinstallprompt support)
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-if (isIOS && !isStandalone) {
+// Show install prompt after login for iOS/all platforms
+function showInstallPromptAfterLogin() {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if (isStandalone) return; // Already installed
+  if (sessionStorage.getItem('abc7_banner_closed')) return; // User dismissed
+
+  // For Chrome/Edge (has beforeinstallprompt)
+  if (deferredPrompt) {
+    document.getElementById('installBtnHeader').style.display = '';
+    document.getElementById('installBanner').style.display = 'block';
+    return;
+  }
+
+  // For iOS Safari / other browsers without beforeinstallprompt
   document.getElementById('installBtnHeader').style.display = '';
+  document.getElementById('installBanner').style.display = 'block';
 }
 </script>
 
