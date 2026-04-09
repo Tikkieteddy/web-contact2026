@@ -1,0 +1,22 @@
+{
+  "name": "ABC7 Contact Directory",
+  "short_name": "ABC7",
+  "description": "ABC7 Executive Contact Network",
+  "start_url": "/ABC7_Contact.html",
+  "display": "standalone",
+  "background_color": "#1b3a5c",
+  "theme_color": "#1b3a5c",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icon_abc7_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon_abc7_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

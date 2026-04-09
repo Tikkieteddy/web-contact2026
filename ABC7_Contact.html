@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ABC7 Contact Directory</title>
+<link rel="manifest" href="/manifest_abc7.json">
+<meta name="theme-color" content="#1b3a5c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ABC7">
+<link rel="apple-touch-icon" href="/icon_abc7_192.png">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -88,6 +94,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .logout-btn-header{padding:8px 18px;background:#dc2626;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600}
 .logout-btn-header:hover{background:#b91c1c}
 .user-welcome{font-size:13px;color:var(--text-secondary);font-weight:500}
+/* PWA Install */
+.install-btn{padding:8px 16px;background:#0d9488;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600;display:none;white-space:nowrap}
+.install-btn:hover{background:#0a7a6e}
+.install-banner{display:none;background:linear-gradient(135deg,#1b3a5c,#2c5aa0);color:#fff;padding:14px 20px;text-align:center;position:fixed;bottom:0;left:0;right:0;z-index:8888;box-shadow:0 -4px 20px rgba(0,0,0,.2)}
+.install-banner p{margin:0 0 10px;font-size:14px}
+.install-banner button{padding:10px 24px;border:none;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;margin:0 6px}
+.install-banner .ib-install{background:#fff;color:#1b3a5c}
+.install-banner .ib-close{background:rgba(255,255,255,.2);color:#fff}
 </style>
 </head>
 <body>
@@ -118,6 +132,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
       <input type="text" id="searchInput" placeholder="ค้นหาชื่อ ตำแหน่ง บริษัท...">
       <span class="stats" id="stats">131 contacts</span>
       <span class="user-welcome" id="userWelcome" style="display:none"></span>
+      <button class="install-btn" id="installBtnHeader" onclick="triggerInstall()">Add to Home</button>
       <button class="logout-btn-header" id="logoutBtn" style="display:none" onclick="doFrontendLogout()">Logout</button>
     </div>
   </div>
@@ -349,6 +364,68 @@ document.getElementById('loginUsername').addEventListener('keypress', e => { if(
 document.getElementById('loginPassword').addEventListener('keypress', e => { if(e.key==='Enter') doFrontendLogin(); });
 
 checkFrontendAuth();
+
+// === PWA Install ===
+let deferredPrompt = null;
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBtnHeader').style.display = '';
+  // Show bottom banner too
+  document.getElementById('installBanner').style.display = 'block';
+});
+
+function triggerInstall() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(result => {
+      deferredPrompt = null;
+      document.getElementById('installBtnHeader').style.display = 'none';
+      document.getElementById('installBanner').style.display = 'none';
+    });
+  } else {
+    // Show manual instructions for iOS/browsers without beforeinstallprompt
+    showManualInstall();
+  }
+}
+
+function showManualInstall() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isMac = /Macintosh/.test(navigator.userAgent);
+  let msg = '';
+  if (isIOS) {
+    msg = 'iOS: กดปุ่ม Share (กล่องลูกศรขึ้น) ด้านล่าง\nแล้วเลือก "Add to Home Screen"';
+  } else if (isMac) {
+    msg = 'Mac Safari: กดเมนู File > Add to Dock\nChrome: กดจุด 3 จุดมุมขวาบน > Install App';
+  } else {
+    msg = 'กดจุด 3 จุด (⋮) มุมขวาบนของ Browser\nแล้วเลือก "Add to Home screen" หรือ "Install App"';
+  }
+  alert(msg);
+}
+
+function closeInstallBanner() {
+  document.getElementById('installBanner').style.display = 'none';
+}
+
+// Show install button for iOS (no beforeinstallprompt support)
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+if (isIOS && !isStandalone) {
+  document.getElementById('installBtnHeader').style.display = '';
+}
 </script>
+
+<!-- Install Banner -->
+<div class="install-banner" id="installBanner">
+  <p>เพิ่ม ABC7 Directory ลงหน้าจอหลักเพื่อเข้าถึงได้เร็วขึ้น</p>
+  <button class="ib-install" onclick="triggerInstall()">Add to Home Screen</button>
+  <button class="ib-close" onclick="closeInstallBanner()">ไม่ใช่ตอนนี้</button>
+</div>
+
 </body>
 </html>

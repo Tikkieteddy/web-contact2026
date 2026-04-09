@@ -1,0 +1,22 @@
+{
+  "name": "NDC57 Contact Directory",
+  "short_name": "NDC57",
+  "description": "NDC57 Contact Directory",
+  "start_url": "/NDC57_Contact.html",
+  "display": "standalone",
+  "background_color": "#1b3a5c",
+  "theme_color": "#1b3a5c",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icon_ndc57_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon_ndc57_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
