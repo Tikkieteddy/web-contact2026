@@ -10,6 +10,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ABC7">
 <link rel="apple-touch-icon" href="/icon_abc7_192.png">
+<link rel="icon" type="image/png" href="/logo_abc7.png">
+<meta property="og:title" content="ABC7 Contact Directory">
+<meta property="og:description" content="ABC7 Executive Contact Network">
+<meta property="og:image" content="https://www.contactbook.vip/icon_abc7_512.png">
+<meta property="og:url" content="https://www.contactbook.vip/ABC7_Contact.html">
+<meta property="og:type" content="website">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -23,7 +29,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .header{background:#ffffff;border-bottom:1px solid var(--border);padding:20px 0;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px);background:rgba(255,255,255,0.95)}
 .header-inner{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
 .logo{display:flex;align-items:center;gap:12px}
-.logo-mark{width:40px;height:40px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;letter-spacing:1px}
+.logo-mark{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.logo-mark img{width:100%;height:100%;object-fit:contain}
 .logo-text{font-size:20px;font-weight:600;color:var(--accent);letter-spacing:0.5px}
 .logo-sub{font-size:12px;color:var(--text-secondary);letter-spacing:0.3px}
 .search-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
@@ -84,7 +91,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .login-box{background:#fff;border-radius:16px;padding:40px 32px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
 .login-box h1{font-size:22px;color:#1b3a5c;margin-bottom:6px}
 .login-box p{font-size:13px;color:#888;margin-bottom:24px}
-.login-box .login-icon{width:70px;height:70px;background:linear-gradient(135deg,#1b3a5c,#2d5a8c);border-radius:14px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:34px;color:#fff}
+.login-box .login-icon{width:90px;height:90px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+.login-box .login-icon img{width:100%;height:100%;object-fit:contain}
 .login-box label{display:block;text-align:left;font-size:13px;color:#555;margin-bottom:6px;font-weight:600}
 .login-box input{width:100%;padding:14px 16px;border:2px solid #dde;border-radius:10px;font-size:16px;outline:none;margin-bottom:14px}
 .login-box input:focus{border-color:#1b3a5c}
@@ -108,7 +116,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 <!-- Login Overlay -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
-    <div class="login-icon">A7</div>
+    <div class="login-icon"><img src="/logo_abc7.png" alt="ABC7"></div>
     <h1>ABC7 Directory</h1>
     <p>กรุณา Login เพื่อเข้าสู่ระบบ</p>
     <label>Username (เบอร์โทรศัพท์)</label>
@@ -122,7 +130,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 <header class="header">
   <div class="header-inner">
     <div class="logo">
-      <div class="logo-mark">A7</div>
+      <div class="logo-mark"><img src="/logo_abc7.png" alt="ABC7"></div>
       <div>
         <div class="logo-text">ABC7 Directory</div>
         <div class="logo-sub">Executive Contact Network</div>
