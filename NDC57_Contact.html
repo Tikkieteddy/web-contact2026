@@ -17,8 +17,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .header{background:#ffffff;border-bottom:1px solid var(--border);padding:20px 0;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px);background:rgba(255,255,255,0.95)}
 .header-inner{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
 .logo{display:flex;align-items:center;gap:12px}
-.logo-mark{width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
-.logo-mark img{width:100%;height:100%;object-fit:contain}
+.logo-mark{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),#c4a265);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;letter-spacing:0.5px}
 .logo-text{font-size:20px;font-weight:600;color:var(--accent);letter-spacing:0.5px}
 .logo-sub{font-size:12px;color:var(--text-secondary);letter-spacing:0.3px}
 .search-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
@@ -74,48 +73,43 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
   .filters{gap:6px}
   .filter-btn{padding:6px 14px;font-size:12px}
 }
-
-/* ===== LOGIN SCREEN ===== */
-.login-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:#faf8f5;z-index:9999;display:flex;align-items:center;justify-content:center;transition:opacity 0.5s,visibility 0.5s}
-.login-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.login-box{background:#fff;border-radius:16px;padding:48px 40px;max-width:400px;width:90%;text-align:center;box-shadow:0 8px 40px rgba(154,123,79,0.1);border:1px solid #e8e0d4}
-.login-logo{width:80px;height:80px;border-radius:14px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin:0 auto 24px}
-.login-logo img{width:100%;height:100%;object-fit:contain}
-.login-title{font-size:24px;font-weight:600;color:#1a1a2e;margin-bottom:8px;letter-spacing:0.3px}
-.login-subtitle{font-size:14px;color:#7a7a9a;margin-bottom:32px}
-.pass-group{margin-bottom:24px}
-.pass-input{width:100%;padding:14px 18px;border:1.5px solid #e8e0d4;border-radius:12px;text-align:center;font-size:20px;font-weight:500;letter-spacing:4px;color:#1a1a2e;background:#fff;outline:none;transition:border-color 0.2s,box-shadow 0.2s;font-family:var(--font)}
-.pass-input:focus{border-color:#9a7b4f;box-shadow:0 0 0 3px rgba(154,123,79,0.1)}
-.pass-input.error{border-color:#e74c3c;box-shadow:0 0 0 3px rgba(231,76,60,0.1);animation:shake 0.4s ease}
-.login-btn{width:100%;padding:14px;background:#9a7b4f;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;transition:opacity 0.2s,transform 0.1s;font-family:var(--font);letter-spacing:0.3px}
-.login-btn:hover{opacity:0.9}
-.login-btn:active{transform:scale(0.98)}
-.login-error{color:#e74c3c;font-size:13px;margin-top:16px;min-height:20px;transition:opacity 0.2s}
-.login-footer{margin-top:24px;font-size:12px;color:#aaa}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-4px)}}
-
+/* Login Overlay */
+.login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#1b3a5c 0%,#2c5aa0 100%);z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-box{background:#fff;border-radius:16px;padding:40px 32px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center}
+.login-box h1{font-size:22px;color:#1b3a5c;margin-bottom:6px}
+.login-box p{font-size:13px;color:#888;margin-bottom:24px}
+.login-box .login-icon{width:70px;height:70px;background:linear-gradient(135deg,#1b3a5c,#2d5a8c);border-radius:14px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:34px;color:#fff}
+.login-box label{display:block;text-align:left;font-size:13px;color:#555;margin-bottom:6px;font-weight:600}
+.login-box input{width:100%;padding:14px 16px;border:2px solid #dde;border-radius:10px;font-size:16px;outline:none;margin-bottom:14px}
+.login-box input:focus{border-color:#1b3a5c}
+.login-box .login-btn{width:100%;padding:14px;background:#1b3a5c;color:#fff;border:none;border-radius:10px;font-size:16px;cursor:pointer;font-weight:600;margin-top:8px}
+.login-box .login-btn:hover{background:#2d5a8c}
+.login-box .login-error{color:#c33;background:#fee;padding:10px;border-radius:8px;margin-top:8px;font-size:13px;display:none}
+.logout-btn-header{padding:8px 18px;background:#dc2626;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600}
+.logout-btn-header:hover{background:#b91c1c}
+.user-welcome{font-size:13px;color:var(--text-secondary);font-weight:500}
 </style>
 </head>
 <body>
-
-<div class="login-screen" id="loginScreen">
+<!-- Login Overlay -->
+<div class="login-overlay" id="loginOverlay">
   <div class="login-box">
-    <div class="login-logo"><img src="image_ndc57_abc7/ndc57/icn-cma2x.png" alt="NDC57 Logo"></div>
-    <div class="login-title">NDC57 Directory</div>
-    <div class="login-subtitle">กรุณาใส่รหัสผ่านเพื่อเข้าสู่ระบบ</div>
-    <div class="pass-group">
-      <input type="password" class="pass-input" id="passInput" placeholder="••••••••••" autocomplete="off" inputmode="numeric">
-    </div>
-    <button class="login-btn" onclick="verifyPin()">เข้าสู่ระบบ</button>
-    <div class="login-error" id="loginError">&nbsp;</div>
-    <div class="login-footer">Authorized Access Only</div>
+    <div class="login-icon">N57</div>
+    <h1>NDC57 Directory</h1>
+    <p>กรุณา Login เพื่อเข้าสู่ระบบ</p>
+    <label>Username (เบอร์โทรศัพท์)</label>
+    <input type="tel" id="loginUsername" placeholder="เช่น 0819130162">
+    <label>Password (เบอร์โทรศัพท์)</label>
+    <input type="password" id="loginPassword" placeholder="กรอกเบอร์โทรศัพท์อีกครั้ง">
+    <div class="login-error" id="loginError"></div>
+    <button class="login-btn" onclick="doFrontendLogin()">เข้าสู่ระบบ</button>
   </div>
 </div>
 
 <header class="header">
   <div class="header-inner">
     <div class="logo">
-      <div class="logo-mark"><img src="image_ndc57_abc7/ndc57/icn-cma2x.png" alt="NDC57 Logo"></div>
+      <div class="logo-mark">N57</div>
       <div>
         <div class="logo-text">NDC57 Directory</div>
         <div class="logo-sub">สมุดรายชื่อผู้บริหาร</div>
@@ -124,6 +118,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
     <div class="search-bar">
       <input type="text" id="searchInput" placeholder="ค้นหาชื่อ ตำแหน่ง องค์กร...">
       <span class="stats" id="stats">311 contacts</span>
+      <span class="user-welcome" id="userWelcome" style="display:none"></span>
+      <button class="logout-btn-header" id="logoutBtn" style="display:none" onclick="doFrontendLogout()">Logout</button>
     </div>
   </div>
 </header>
@@ -258,43 +254,94 @@ function closeModal() {
   document.body.style.overflow = "";
 }
 
-init();
-
-// ===== LOGIN SYSTEM =====
-const CORRECT_PASS = "0954295665";
-const passInput = document.getElementById('passInput');
-
-passInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') verifyPin();
-});
-passInput.addEventListener('input', () => {
-  passInput.classList.remove('error');
-  document.getElementById('loginError').innerHTML = '&nbsp;';
-});
-
-setTimeout(() => { passInput.focus(); }, 300);
-
-function verifyPin() {
-  if (passInput.value === CORRECT_PASS) {
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.querySelector('.header').style.display = '';
-    document.querySelector('.container').style.display = '';
-    sessionStorage.setItem('auth_ndc57', 'true');
-  } else {
-    document.getElementById('loginError').textContent = 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง';
-    passInput.classList.add('error');
-    passInput.value = '';
-    passInput.focus();
+// Build phone index from contacts
+const PHONE_INDEX_FE = {};
+CONTACTS.forEach(c => {
+  if (c.mobile1) {
+    const p = c.mobile1.replace(/\D/g, '');
+    if (p) {
+      if (!PHONE_INDEX_FE[p]) PHONE_INDEX_FE[p] = [];
+      PHONE_INDEX_FE[p].push(c);
+    }
   }
+  if (c.mobile2) {
+    const p = c.mobile2.replace(/\D/g, '');
+    if (p) {
+      if (!PHONE_INDEX_FE[p]) PHONE_INDEX_FE[p] = [];
+      PHONE_INDEX_FE[p].push(c);
+    }
+  }
+});
+
+function doFrontendLogin() {
+  const username = document.getElementById('loginUsername').value.replace(/\D/g, '');
+  const password = document.getElementById('loginPassword').value.replace(/\D/g, '');
+  const err = document.getElementById('loginError');
+  err.style.display = 'none';
+
+  if (!username || username.length < 9) {
+    err.textContent = 'กรุณากรอก Username (เบอร์โทรศัพท์)';
+    err.style.display = 'block';
+    return;
+  }
+  if (!password) {
+    err.textContent = 'กรุณากรอก Password';
+    err.style.display = 'block';
+    return;
+  }
+  if (username !== password) {
+    err.textContent = 'Username หรือ Password ไม่ถูกต้อง';
+    err.style.display = 'block';
+    return;
+  }
+
+  const matches = PHONE_INDEX_FE[username];
+  if (!matches || matches.length === 0) {
+    err.textContent = 'ไม่พบเบอร์โทรศัพท์นี้ในระบบ';
+    err.style.display = 'block';
+    return;
+  }
+
+  sessionStorage.setItem('fe_user_ndc57', JSON.stringify({phone: username, user: matches[0]}));
+
+  document.getElementById('loginOverlay').style.display = 'none';
+
+  const user = matches[0];
+  document.getElementById('userWelcome').textContent = 'สวัสดี คุณ' + (user.nickname || user.tname);
+  document.getElementById('userWelcome').style.display = '';
+  document.getElementById('logoutBtn').style.display = '';
+
+  setFilter(user.group_id);
 }
 
-if (sessionStorage.getItem('auth_ndc57') === 'true') {
-  document.getElementById('loginScreen').classList.add('hidden');
-} else {
-  document.querySelector('.header').style.display = 'none';
-  document.querySelector('.container').style.display = 'none';
+function doFrontendLogout() {
+  sessionStorage.removeItem('fe_user_ndc57');
+  location.reload();
 }
 
+function checkFrontendAuth() {
+  const s = sessionStorage.getItem('fe_user_ndc57');
+  if (s) {
+    try {
+      const data = JSON.parse(s);
+      if (data && data.user) {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('userWelcome').textContent = 'สวัสดี คุณ' + (data.user.nickname || data.user.tname);
+        document.getElementById('userWelcome').style.display = '';
+        document.getElementById('logoutBtn').style.display = '';
+        init();
+        setFilter(data.user.group_id);
+        return;
+      }
+    } catch(e) {}
+  }
+  document.getElementById('loginOverlay').style.display = 'flex';
+}
+
+document.getElementById('loginUsername').addEventListener('keypress', e => { if(e.key==='Enter') document.getElementById('loginPassword').focus(); });
+document.getElementById('loginPassword').addEventListener('keypress', e => { if(e.key==='Enter') doFrontendLogin(); });
+
+checkFrontendAuth();
 </script>
 </body>
 </html>
